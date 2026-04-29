@@ -133,6 +133,7 @@ const state = {
   wishlist: JSON.parse(localStorage.getItem("kantiWishlist") || "[]"),
   recent: JSON.parse(localStorage.getItem("kantiRecent") || "[]"),
   pincode: localStorage.getItem("kantiPincode") || "",
+  user: JSON.parse(localStorage.getItem("kantiUser") || "null"),
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -145,6 +146,7 @@ const els = {
   categorySelect: $("[data-category-select]"),
   sort: $("[data-sort]"),
   ratingFilter: $("[data-rating-filter]"),
+  noResults: $("[data-no-results]"),
   cartDrawer: $("[data-cart-drawer]"),
   wishlistDrawer: $("[data-wishlist-drawer]"),
   cartItems: $("[data-cart-items]"),
@@ -157,6 +159,9 @@ const els = {
   quickModal: $("[data-quick-modal]"),
   offerModal: $("[data-offer-modal]"),
   locationModal: $("[data-location-modal]"),
+  accountModal: $("[data-account-modal]"),
+  accountForm: $("[data-account-form]"),
+  accountLabel: $("[data-account-label]"),
   pincode: $("[data-pincode]"),
   recentSection: $("[data-recent-section]"),
   recentGrid: $("[data-recent-grid]"),
@@ -172,7 +177,9 @@ function init() {
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
   if (els.pincode) els.pincode.value = state.pincode;
+  populateAccountForm();
   updateLanguageButtons();
+  updateAccountUi();
   bindEvents();
   renderProducts();
   renderCart();
@@ -187,6 +194,8 @@ function bindEvents() {
     event.preventDefault();
     state.search = els.searchInput.value.trim();
     renderProducts();
+    document.querySelector("#products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    showToast(state.search ? `Search: ${state.search}` : (state.lang === "mr" ? "सर्व products दाखवत आहे." : "Showing all products."));
   });
   els.searchInput?.addEventListener("input", () => {
     state.search = els.searchInput.value.trim();
@@ -222,7 +231,11 @@ function bindEvents() {
   $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
   $$("[data-location-open]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, true)));
   $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
+  $$("[data-account-open]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, true)));
+  $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
+  els.accountForm?.addEventListener("submit", saveAccount);
+  $("[data-account-logout]")?.addEventListener("click", logoutAccount);
   document.addEventListener("click", handleDocumentClick);
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -230,6 +243,7 @@ function bindEvents() {
       setModal(els.offerModal, false);
       setModal(els.quickModal, false);
       setModal(els.locationModal, false);
+      setModal(els.accountModal, false);
     }
   });
 }
@@ -241,6 +255,7 @@ function setLanguage(lang) {
   document.documentElement.lang = lang;
   els.searchInput.placeholder = lang === "mr" ? "उत्पादन शोधा..." : "Search products...";
   updateLanguageButtons();
+  updateAccountUi();
   renderProducts();
   renderCart();
   renderWishlist();
@@ -276,6 +291,7 @@ function renderProducts() {
   const list = filteredProducts();
   els.resultCount.textContent =
     state.lang === "mr" ? `${list.length} products दिसत आहेत` : `${list.length} products found`;
+  els.noResults.hidden = list.length !== 0;
   els.grid.innerHTML = list.map(productCard).join("");
 }
 
@@ -316,12 +332,67 @@ function handleDocumentClick(event) {
   if (buy) buyNow(buy.dataset.buyNow);
   if (quick) quickView(quick.dataset.quickView);
   if (wish) toggleWishlist(wish.dataset.wishlistToggle);
-  if ([els.offerModal, els.quickModal, els.locationModal, els.cartDrawer, els.wishlistDrawer].includes(event.target)) {
+  if ([els.offerModal, els.quickModal, els.locationModal, els.accountModal, els.cartDrawer, els.wishlistDrawer].includes(event.target)) {
     closeDrawers();
     setModal(els.offerModal, false);
     setModal(els.quickModal, false);
     setModal(els.locationModal, false);
+    setModal(els.accountModal, false);
   }
+}
+
+function saveAccount(event) {
+  event.preventDefault();
+  const data = new FormData(els.accountForm);
+  state.user = {
+    name: String(data.get("name") || "").trim(),
+    phone: String(data.get("phone") || "").trim(),
+    email: String(data.get("email") || "").trim(),
+    password: String(data.get("password") || "").trim(),
+    address: String(data.get("address") || "").trim(),
+    city: String(data.get("city") || "").trim(),
+    pincode: String(data.get("pincode") || "").trim(),
+  };
+  localStorage.setItem("kantiUser", JSON.stringify(state.user));
+  state.pincode = state.user.pincode;
+  localStorage.setItem("kantiPincode", state.pincode);
+  if (els.pincode) els.pincode.value = state.pincode;
+  updateAccountUi();
+  setModal(els.accountModal, false);
+  showToast(state.lang === "mr" ? "Login आणि address save झाले." : "Login and address saved.");
+}
+
+function logoutAccount() {
+  state.user = null;
+  localStorage.removeItem("kantiUser");
+  els.accountForm?.reset();
+  updateAccountUi();
+  showToast(state.lang === "mr" ? "Logout झाले." : "Logged out.");
+}
+
+function populateAccountForm() {
+  if (!els.accountForm || !state.user) return;
+  Object.entries(state.user).forEach(([key, value]) => {
+    const field = els.accountForm.elements[key];
+    if (field) field.value = value || "";
+  });
+}
+
+function updateAccountUi() {
+  if (!els.accountLabel) return;
+  els.accountLabel.textContent = state.user?.name ? state.user.name.split(" ")[0] : "Login";
+}
+
+function hasAddress() {
+  return Boolean(state.user?.name && state.user?.phone && state.user?.address && state.user?.city && state.user?.pincode);
+}
+
+function ensureLoggedInWithAddress() {
+  if (hasAddress()) return true;
+  populateAccountForm();
+  setModal(els.accountModal, true);
+  showToast(state.lang === "mr" ? "Order करण्यासाठी login आणि address save करा." : "Please login and save your address to place the order.");
+  return false;
 }
 
 function addToCart(sku, silent = false) {
@@ -335,9 +406,10 @@ function addToCart(sku, silent = false) {
 function buyNow(sku) {
   const product = getProduct(sku);
   if (!product) return;
+  if (!ensureLoggedInWithAddress()) return;
   addRecent(sku);
   const intro = state.lang === "mr" ? "नमस्कार Sree Kanti, मला हे product order करायचे आहे:" : "Hello Sree Kanti, I want to order this product:";
-  openWhatsApp(`${intro}\n${product[state.lang].name}\nQty: 1\nTotal: ₹${product.price}${pinText()}`);
+  openWhatsApp(`${intro}\n${product[state.lang].name}\nQty: 1\nTotal: ₹${product.price}${customerText()}${pinText()}`);
 }
 
 function renderCart() {
@@ -374,6 +446,7 @@ window.updateQty = function updateQty(sku, delta) {
 function checkoutCart() {
   const entries = cartEntries();
   if (!entries.length) return showToast(state.lang === "mr" ? "Cart रिकामे आहे." : "Cart is empty.");
+  if (!ensureLoggedInWithAddress()) return;
   const lines = entries.map(([sku, qty], index) => {
     const product = getProduct(sku);
     return `${index + 1}. ${product[state.lang].name} - Qty ${qty} - ₹${product.price * qty}`;
@@ -381,7 +454,7 @@ function checkoutCart() {
   const total = entries.reduce((sum, [sku, qty]) => sum + getProduct(sku).price * qty, 0);
   const coupon = $("[data-coupon-input]")?.value.trim();
   const intro = state.lang === "mr" ? "नमस्कार Sree Kanti, मला खालील order करायचे आहे:" : "Hello Sree Kanti, I want to order:";
-  openWhatsApp(`${intro}\n\n${lines.join("\n")}\n\nTotal: ₹${total}${coupon ? `\nCoupon: ${coupon}` : ""}${pinText()}`);
+  openWhatsApp(`${intro}\n\n${lines.join("\n")}\n\nTotal: ₹${total}${coupon ? `\nCoupon: ${coupon}` : ""}${customerText()}${pinText()}`);
 }
 
 function clearCart() {
@@ -503,7 +576,11 @@ function cartEntries() {
 }
 function getProduct(sku) { return products.find((product) => product.sku === sku); }
 function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
-function pinText() { return state.pincode ? `\nPIN code: ${state.pincode}` : ""; }
+function pinText() { return state.pincode && state.pincode !== state.user?.pincode ? `\nPIN code: ${state.pincode}` : ""; }
+function customerText() {
+  if (!state.user) return "";
+  return `\n\nCustomer Details:\nName: ${state.user.name}\nPhone: ${state.user.phone}${state.user.email ? `\nEmail: ${state.user.email}` : ""}\nAddress: ${state.user.address}, ${state.user.city} - ${state.user.pincode}`;
+}
 function openWhatsApp(message) { window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank", "noopener"); }
 function showToast(message) {
   els.toast.textContent = message;

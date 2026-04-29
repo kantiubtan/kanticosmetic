@@ -2,7 +2,9 @@
 
 Static GitHub Pages website for Sree Kanti natural skincare and bath care products.
 
-The site includes an Amazon-style storefront, Marathi/English language switching, search, category filters, sorting, product cards, introductory pricing, ratings, wishlist, quick view, recently viewed products, cart, Buy Now buttons, coupon note, delivery PIN note, WhatsApp checkout, Instagram link, and offer popup.
+The site includes an Amazon-style storefront, Marathi/English language switching, search, category filters, sorting, product cards, introductory pricing, ratings, wishlist, quick view, recently viewed products, cart, Buy Now buttons, local user login, delivery address saving, coupon note, delivery PIN note, WhatsApp checkout, Instagram link, and offer popup.
+
+Note: Login and address are saved in the visitor's browser using local storage. For real accounts, online payments, and order history across devices, connect a backend or e-commerce platform later.
 
 ## Files
 

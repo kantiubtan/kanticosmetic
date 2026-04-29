@@ -270,7 +270,7 @@ p { color: var(--muted); }
 .contact-line span { color: var(--muted); font-weight: 800; }
 .contact-line strong { color: var(--teal); }
 
-.offer-modal, .quick-modal, .cart-drawer, .wishlist-drawer, .location-modal {
+.offer-modal, .quick-modal, .cart-drawer, .wishlist-drawer, .location-modal, .account-modal {
   position: fixed;
   inset: 0;
   z-index: 120;
@@ -278,9 +278,9 @@ p { color: var(--muted); }
   background: rgba(20,12,9,.62);
   backdrop-filter: blur(6px);
 }
-.offer-modal.is-open, .quick-modal.is-open, .cart-drawer.is-open, .wishlist-drawer.is-open, .location-modal.is-open { display: flex; }
-.offer-modal, .quick-modal, .location-modal { align-items: center; justify-content: center; padding: 18px; }
-.offer-dialog, .quick-dialog, .location-card {
+.offer-modal.is-open, .quick-modal.is-open, .cart-drawer.is-open, .wishlist-drawer.is-open, .location-modal.is-open, .account-modal.is-open { display: flex; }
+.offer-modal, .quick-modal, .location-modal, .account-modal { align-items: center; justify-content: center; padding: 18px; }
+.offer-dialog, .quick-dialog, .location-card, .account-card {
   position: relative;
   width: min(860px, 100%);
   max-height: 92vh;
@@ -336,6 +336,34 @@ p { color: var(--muted); }
 .cart-actions { display: grid; gap: 10px; }
 .location-card { max-width: 430px; padding: 24px; }
 .location-card input { width: 100%; min-height: 46px; margin: 12px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.account-card { max-width: 760px; padding: 24px; }
+.account-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.account-form label { display: grid; gap: 6px; color: var(--teal); font-weight: 900; }
+.account-form input, .account-form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.account-form textarea { resize: vertical; }
+.wide { grid-column: 1 / -1; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.no-results {
+  padding: 24px;
+  margin-bottom: 18px;
+  text-align: center;
+  background: #fff;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+}
 .toast {
   position: fixed;
   right: 18px;
@@ -384,4 +412,5 @@ p { color: var(--muted); }
   .product-actions, .deal-actions, .hero-actions, .modal-actions { display: grid; grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 64px 1fr; }
   .cart-qty { grid-column: 2; }
+  .account-form { grid-template-columns: 1fr; }
 }

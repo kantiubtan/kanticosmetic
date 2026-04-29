@@ -43,6 +43,9 @@
           <button class="active" type="button" data-lang-set="mr">मराठी</button>
           <button type="button" data-lang-set="en">EN</button>
         </div>
+        <button class="icon-action" type="button" data-account-open>
+          <span data-account-label>Login</span>
+        </button>
         <button class="icon-action" type="button" data-wishlist-open>
           <span data-lang="mr">Wishlist</span>
           <span data-lang="en">Wishlist</span>
@@ -138,6 +141,10 @@
               <option value="price">Price low to high</option>
             </select>
           </div>
+          <div class="no-results" data-no-results hidden>
+            <strong><span data-lang="mr">काही products सापडले नाहीत.</span><span data-lang="en">No products found.</span></strong>
+            <p><span data-lang="mr">Search शब्द बदलून पहा किंवा All category निवडा.</span><span data-lang="en">Try changing your search or select All category.</span></p>
+          </div>
           <div class="product-grid" data-product-grid></div>
         </section>
       </section>
@@ -171,6 +178,7 @@
           </ol>
         </div>
         <div class="contact-card">
+          <button class="button secondary full" type="button" data-account-open><span data-lang="mr">Login / Address जोडा</span><span data-lang="en">Login / Add Address</span></button>
           <a class="contact-line" href="mailto:kantiubtan@gmail.com"><span>Email</span><strong>kantiubtan@gmail.com</strong></a>
           <a class="contact-line" href="tel:+918208427976"><span>Phone</span><strong>8208427976</strong></a>
           <a class="contact-line" href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer"><span>Instagram</span><strong>@kantiubtan</strong></a>
@@ -232,6 +240,49 @@
         <p><span data-lang="mr">तुमचा PIN code टाका. आम्ही WhatsApp वर delivery confirm करू.</span><span data-lang="en">Enter your PIN code. Delivery will be confirmed on WhatsApp.</span></p>
         <input data-pincode maxlength="6" inputmode="numeric" placeholder="PIN code" />
         <button class="button primary full" type="button" data-save-pincode>Save PIN</button>
+      </div>
+    </div>
+
+    <div class="account-modal" data-account-modal aria-hidden="true">
+      <div class="account-card">
+        <button class="round-close" type="button" data-account-close aria-label="Close account">×</button>
+        <p class="eyebrow">Account</p>
+        <h2><span data-lang="mr">Login आणि Delivery Address</span><span data-lang="en">Login and Delivery Address</span></h2>
+        <p><span data-lang="mr">ही माहिती या browser मध्ये save होईल आणि checkout message मध्ये address जोडला जाईल.</span><span data-lang="en">This information is saved in this browser and added to the checkout message.</span></p>
+        <form class="account-form" data-account-form>
+          <label>
+            <span data-lang="mr">नाव</span><span data-lang="en">Full name</span>
+            <input name="name" required autocomplete="name" />
+          </label>
+          <label>
+            <span data-lang="mr">मोबाइल नंबर</span><span data-lang="en">Mobile number</span>
+            <input name="phone" required inputmode="tel" autocomplete="tel" />
+          </label>
+          <label>
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            <span data-lang="mr">Password / PIN</span><span data-lang="en">Password / PIN</span>
+            <input name="password" type="password" autocomplete="current-password" />
+          </label>
+          <label class="wide">
+            <span data-lang="mr">पूर्ण पत्ता</span><span data-lang="en">Full address</span>
+            <textarea name="address" required rows="3"></textarea>
+          </label>
+          <label>
+            <span data-lang="mr">शहर</span><span data-lang="en">City</span>
+            <input name="city" required autocomplete="address-level2" />
+          </label>
+          <label>
+            <span>PIN code</span>
+            <input name="pincode" required maxlength="6" inputmode="numeric" autocomplete="postal-code" />
+          </label>
+          <div class="account-actions wide">
+            <button class="button primary" type="submit"><span data-lang="mr">Save आणि Login</span><span data-lang="en">Save and Login</span></button>
+            <button class="button secondary" type="button" data-account-logout><span data-lang="mr">Logout</span><span data-lang="en">Logout</span></button>
+          </div>
+        </form>
       </div>
     </div>
 
