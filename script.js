@@ -1,225 +1,513 @@
-const products = {
-  ubtan: { price: 1, mr: "कांती उटणे", en: "Kanti Ubtan" },
-  "bath-salt": { price: 1, mr: "कांती बाथ सॉल्ट", en: "Kanti Bath Salt" },
-  "bath-soap": { price: 1, mr: "कांती बाथ सोप", en: "Kanti Bath Soap" },
-  "face-mask-offer": { price: 1, mr: "Herbal Summer Face Mask Offer", en: "Herbal Summer Face Mask Offer" },
-  "face-oil": { price: 1, mr: "कांती फेस ऑईल", en: "Kanti Face Oil" },
-  "gift-hamper": { price: 1, mr: "कांती गिफ्ट हॅम्पर", en: "Kanti Gift Hamper" },
+const whatsappNumber = "918208427976";
+const products = [
+  {
+    sku: "ubtan",
+    category: "skin",
+    image: "assets/products/ubtan.jpg",
+    price: 1,
+    mrp: 99,
+    rating: 4.8,
+    reviews: 128,
+    tags: ["Ubtan", "Glow", "Powder"],
+    mr: {
+      name: "कांती उटणे",
+      desc: "पारंपरिक उटण्यापासून प्रेरित powder cleanser. त्वचा स्वच्छ, मऊ आणि ताजीतवानी वाटण्यासाठी.",
+      bullets: ["दूध, गुलाबजल किंवा दह्यासोबत paste करा", "चेहरा, मान, हात आणि पायांसाठी योग्य"],
+    },
+    en: {
+      name: "Kanti Ubtan",
+      desc: "Traditional ubtan-inspired powder cleanser for a clean, soft and refreshed skin feel.",
+      bullets: ["Mix with milk, rose water or curd", "Suitable for face, neck, hands and feet"],
+    },
+  },
+  {
+    sku: "bath-salt",
+    category: "bath",
+    image: "assets/products/bath-salt.jpg",
+    price: 1,
+    mrp: 149,
+    rating: 4.7,
+    reviews: 94,
+    tags: ["Bath Salt", "Rose", "Relax"],
+    mr: {
+      name: "कांती बाथ सॉल्ट",
+      desc: "Rose-petal आणि mineral salt inspired blend. Foot soak आणि relaxing bath साठी.",
+      bullets: ["गरम पाण्यात मिसळून वापरा", "Pedicure routine आणि gifting साठी योग्य"],
+    },
+    en: {
+      name: "Kanti Bath Salt",
+      desc: "Rose-petal and mineral salt inspired blend for foot soaks and relaxing baths.",
+      bullets: ["Mix in warm water", "Ideal for pedicure routines and gifting"],
+    },
+  },
+  {
+    sku: "bath-soap",
+    category: "bath",
+    image: "assets/products/bath-soap.jpg",
+    price: 1,
+    mrp: 79,
+    rating: 4.6,
+    reviews: 76,
+    tags: ["Soap", "Herbal", "Daily"],
+    mr: {
+      name: "कांती बाथ सोप",
+      desc: "Herbal handmade-style bathing bar. रोजच्या स्नानासाठी gentle cleansing feel.",
+      bullets: ["Daily bath routine मध्ये वापरण्यास सोपा", "Hamper add-on म्हणून चांगला"],
+    },
+    en: {
+      name: "Kanti Bath Soap",
+      desc: "Herbal handmade-style bathing bar for a gentle everyday cleansing feel.",
+      bullets: ["Easy for daily bath routines", "Works beautifully as a hamper add-on"],
+    },
+  },
+  {
+    sku: "face-mask-offer",
+    category: "skin",
+    image: "assets/products/face-mask.jpg",
+    price: 1,
+    mrp: 65,
+    rating: 4.9,
+    reviews: 211,
+    deal: true,
+    tags: ["Face Mask", "Offer", "Summer"],
+    mr: {
+      name: "Herbal Summer Face Mask",
+      desc: "Cooling, tan removal आणि deep cleansing inspired face mask powder. Limited launch offer.",
+      bullets: ["Rose water, milk किंवा aloe gel सोबत mix करा", "10-12 मिनिटांनी पूर्ण dry होण्याआधी rinse करा"],
+    },
+    en: {
+      name: "Herbal Summer Face Mask",
+      desc: "Cooling, tan-removal and deep-cleansing inspired face mask powder. Limited launch offer.",
+      bullets: ["Mix with rose water, milk or aloe gel", "Rinse before fully dry after 10-12 minutes"],
+    },
+  },
+  {
+    sku: "face-oil",
+    category: "skin",
+    image: "assets/products/face-oil.jpg",
+    price: 1,
+    mrp: 199,
+    rating: 4.7,
+    reviews: 83,
+    tags: ["Face Oil", "Glow", "Night"],
+    mr: {
+      name: "कांती फेस ऑईल",
+      desc: "Night skincare routine नंतर soft, nourished finish देण्यासाठी facial oil.",
+      bullets: ["स्वच्छ चेहऱ्यावर 2-3 थेंब massage करा", "Glow finish आणि night care साठी"],
+    },
+    en: {
+      name: "Kanti Face Oil",
+      desc: "Facial oil for a soft, nourished finish after your night skincare routine.",
+      bullets: ["Massage 2-3 drops on a clean face", "For glow finish and night care"],
+    },
+  },
+  {
+    sku: "gift-hamper",
+    category: "gift",
+    image: "assets/products/gift-hamper.jpg",
+    price: 1,
+    mrp: 399,
+    rating: 4.9,
+    reviews: 156,
+    tags: ["Gift", "Hamper", "Festival"],
+    mr: {
+      name: "कांती गिफ्ट हॅम्पर",
+      desc: "Skincare आणि bath care products चे gifting combination. सण, corporate gifting आणि return gifts साठी.",
+      bullets: ["Budget आणि quantity नुसार custom options", "Premium labels आणि elegant presentation"],
+    },
+    en: {
+      name: "Kanti Gift Hamper",
+      desc: "Curated skincare and bath care gifting combination for festivals and return gifts.",
+      bullets: ["Custom options by budget and quantity", "Premium labels and elegant presentation"],
+    },
+  },
+];
+
+const state = {
+  lang: localStorage.getItem("kantiLang") || "mr",
+  category: "all",
+  search: "",
+  sort: "featured",
+  minRating: false,
+  cart: JSON.parse(localStorage.getItem("kantiCart") || "{}"),
+  wishlist: JSON.parse(localStorage.getItem("kantiWishlist") || "[]"),
+  recent: JSON.parse(localStorage.getItem("kantiRecent") || "[]"),
+  pincode: localStorage.getItem("kantiPincode") || "",
 };
 
-const whatsappNumber = "918208427976";
-const menuToggle = document.querySelector("[data-menu-toggle]");
-const nav = document.querySelector("[data-nav]");
-const header = document.querySelector("[data-header]");
-const offerModal = document.querySelector("[data-offer-modal]");
-const offerOpen = document.querySelector("[data-offer-open]");
-const offerCloseButtons = document.querySelectorAll("[data-offer-close]");
-const cartDrawer = document.querySelector("[data-cart-drawer]");
-const cartItemsEl = document.querySelector("[data-cart-items]");
-const cartEmptyEl = document.querySelector("[data-cart-empty]");
-const cartTotalEl = document.querySelector("[data-cart-total]");
-const cartCountEl = document.querySelector("[data-cart-count]");
-const toastEl = document.querySelector("[data-toast]");
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-let activeLang = localStorage.getItem("kantiLang") || "mr";
-let cart = JSON.parse(localStorage.getItem("kantiCart") || "{}");
+const els = {
+  grid: $("[data-product-grid]"),
+  resultCount: $("[data-result-count]"),
+  searchInput: $("[data-search-input]"),
+  categorySelect: $("[data-category-select]"),
+  sort: $("[data-sort]"),
+  ratingFilter: $("[data-rating-filter]"),
+  cartDrawer: $("[data-cart-drawer]"),
+  wishlistDrawer: $("[data-wishlist-drawer]"),
+  cartItems: $("[data-cart-items]"),
+  wishlistItems: $("[data-wishlist-items]"),
+  cartEmpty: $("[data-cart-empty]"),
+  wishlistEmpty: $("[data-wishlist-empty]"),
+  cartTotal: $("[data-cart-total]"),
+  cartCount: $("[data-cart-count]"),
+  wishlistCount: $("[data-wishlist-count]"),
+  quickModal: $("[data-quick-modal]"),
+  offerModal: $("[data-offer-modal]"),
+  locationModal: $("[data-location-modal]"),
+  pincode: $("[data-pincode]"),
+  recentSection: $("[data-recent-section]"),
+  recentGrid: $("[data-recent-grid]"),
+  toast: $("[data-toast]"),
+  countdown: $("[data-countdown]"),
+};
+
 let toastTimer;
 
-document.body.dataset.activeLang = activeLang;
-document.documentElement.lang = activeLang;
-updateLanguageButtons();
-renderCart();
+init();
 
-menuToggle?.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  document.body.classList.toggle("menu-open", isOpen);
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
-nav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    nav.classList.remove("is-open");
-    document.body.classList.remove("menu-open");
-    menuToggle?.setAttribute("aria-expanded", "false");
-  });
-});
-
-document.querySelectorAll("[data-lang-set]").forEach((button) => {
-  button.addEventListener("click", () => {
-    activeLang = button.dataset.langSet;
-    localStorage.setItem("kantiLang", activeLang);
-    document.body.dataset.activeLang = activeLang;
-    document.documentElement.lang = activeLang;
-    updateLanguageButtons();
-    renderCart();
-  });
-});
-
-document.querySelectorAll("[data-add-cart]").forEach((button) => {
-  button.addEventListener("click", () => {
-    addToCart(button.dataset.addCart);
-    showToast(activeLang === "mr" ? "Product cart मध्ये add झाला." : "Product added to cart.");
-  });
-});
-
-document.querySelectorAll("[data-buy-now]").forEach((button) => {
-  button.addEventListener("click", () => {
-    buyNow(button.dataset.buyNow);
-  });
-});
-
-document.querySelectorAll("[data-cart-open]").forEach((button) => {
-  button.addEventListener("click", () => setCartOpen(true));
-});
-
-document.querySelector("[data-cart-close]")?.addEventListener("click", () => setCartOpen(false));
-document.querySelector("[data-cart-clear]")?.addEventListener("click", clearCart);
-document.querySelector("[data-cart-checkout]")?.addEventListener("click", checkoutCart);
-
-cartDrawer?.addEventListener("click", (event) => {
-  if (event.target === cartDrawer) setCartOpen(false);
-});
-
-window.addEventListener(
-  "scroll",
-  () => {
-    header?.classList.toggle("is-scrolled", window.scrollY > 8);
-  },
-  { passive: true }
-);
-
-function setOfferOpen(isOpen) {
-  if (!offerModal) return;
-  offerModal.classList.toggle("is-open", isOpen);
-  offerModal.setAttribute("aria-hidden", String(!isOpen));
-  document.body.classList.toggle("menu-open", isOpen);
+function init() {
+  document.body.dataset.activeLang = state.lang;
+  document.documentElement.lang = state.lang;
+  if (els.pincode) els.pincode.value = state.pincode;
+  updateLanguageButtons();
+  bindEvents();
+  renderProducts();
+  renderCart();
+  renderWishlist();
+  renderRecent();
+  startCountdown();
 }
 
-offerOpen?.addEventListener("click", () => setOfferOpen(true));
-offerCloseButtons.forEach((button) => button.addEventListener("click", () => setOfferOpen(false)));
-offerModal?.addEventListener("click", (event) => {
-  if (event.target === offerModal) setOfferOpen(false);
-});
+function bindEvents() {
+  $$("[data-lang-set]").forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.langSet)));
+  $("[data-search-form]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    state.search = els.searchInput.value.trim();
+    renderProducts();
+  });
+  els.searchInput?.addEventListener("input", () => {
+    state.search = els.searchInput.value.trim();
+    renderProducts();
+  });
+  els.categorySelect?.addEventListener("change", () => {
+    state.category = els.categorySelect.value;
+    updateFilterChips();
+    renderProducts();
+  });
+  $$("[data-filter]").forEach((button) => button.addEventListener("click", () => {
+    state.category = button.dataset.filter;
+    els.categorySelect.value = state.category;
+    updateFilterChips();
+    renderProducts();
+  }));
+  els.sort?.addEventListener("change", () => {
+    state.sort = els.sort.value;
+    renderProducts();
+  });
+  els.ratingFilter?.addEventListener("change", () => {
+    state.minRating = els.ratingFilter.checked;
+    renderProducts();
+  });
+  $$("[data-cart-open]").forEach((button) => button.addEventListener("click", () => openDrawer("cart")));
+  $$("[data-wishlist-open]").forEach((button) => button.addEventListener("click", () => openDrawer("wishlist")));
+  $("[data-cart-close]")?.addEventListener("click", closeDrawers);
+  $("[data-wishlist-close]")?.addEventListener("click", closeDrawers);
+  $("[data-cart-clear]")?.addEventListener("click", clearCart);
+  $("[data-cart-checkout]")?.addEventListener("click", checkoutCart);
+  $("[data-apply-coupon]")?.addEventListener("click", () => showToast(state.lang === "mr" ? "Coupon note WhatsApp order मध्ये जोडले जाईल." : "Coupon note will be included in WhatsApp order."));
+  $$("[data-offer-open]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, true)));
+  $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
+  $$("[data-location-open]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, true)));
+  $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
+  $("[data-save-pincode]")?.addEventListener("click", savePincode);
+  document.addEventListener("click", handleDocumentClick);
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeDrawers();
+      setModal(els.offerModal, false);
+      setModal(els.quickModal, false);
+      setModal(els.locationModal, false);
+    }
+  });
+}
 
-window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    setOfferOpen(false);
-    setCartOpen(false);
-  }
-});
+function setLanguage(lang) {
+  state.lang = lang;
+  localStorage.setItem("kantiLang", lang);
+  document.body.dataset.activeLang = lang;
+  document.documentElement.lang = lang;
+  els.searchInput.placeholder = lang === "mr" ? "उत्पादन शोधा..." : "Search products...";
+  updateLanguageButtons();
+  renderProducts();
+  renderCart();
+  renderWishlist();
+  renderRecent();
+}
 
 function updateLanguageButtons() {
-  document.querySelectorAll("[data-lang-set]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.langSet === activeLang);
+  $$("[data-lang-set]").forEach((button) => button.classList.toggle("active", button.dataset.langSet === state.lang));
+}
+
+function updateFilterChips() {
+  $$("[data-filter]").forEach((button) => button.classList.toggle("active", button.dataset.filter === state.category));
+}
+
+function filteredProducts() {
+  const query = state.search.toLowerCase();
+  let list = products.filter((product) => {
+    const text = `${product.mr.name} ${product.en.name} ${product.tags.join(" ")} ${product.mr.desc} ${product.en.desc}`.toLowerCase();
+    const matchesCategory = state.category === "all" || product.category === state.category;
+    const matchesSearch = !query || text.includes(query);
+    const matchesRating = !state.minRating || product.rating >= 4.5;
+    return matchesCategory && matchesSearch && matchesRating;
   });
+
+  if (state.sort === "rating") list = list.sort((a, b) => b.rating - a.rating);
+  if (state.sort === "name") list = list.sort((a, b) => a.en.name.localeCompare(b.en.name));
+  if (state.sort === "price") list = list.sort((a, b) => a.price - b.price);
+  if (state.sort === "featured") list = list.sort((a, b) => Number(b.deal || false) - Number(a.deal || false));
+  return list;
 }
 
-function addToCart(sku) {
-  if (!products[sku]) return;
-  cart[sku] = (cart[sku] || 0) + 1;
-  saveCart();
+function renderProducts() {
+  const list = filteredProducts();
+  els.resultCount.textContent =
+    state.lang === "mr" ? `${list.length} products दिसत आहेत` : `${list.length} products found`;
+  els.grid.innerHTML = list.map(productCard).join("");
+}
+
+function productCard(product) {
+  const copy = product[state.lang];
+  const off = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+  const wished = state.wishlist.includes(product.sku);
+  return `
+    <article class="product-card">
+      <div class="product-media">
+        <img src="${product.image}" alt="${copy.name}">
+        ${product.deal ? `<span class="badge">${state.lang === "mr" ? "ऑफर" : "Deal"}</span>` : ""}
+        <button class="wish-btn ${wished ? "active" : ""}" type="button" data-wishlist-toggle="${product.sku}" aria-label="Wishlist">♥</button>
+      </div>
+      <div class="product-body">
+        <div class="stars">★ ${product.rating} <span>(${product.reviews})</span></div>
+        <h3 class="product-title">${copy.name}</h3>
+        <p class="product-desc">${copy.desc}</p>
+        <div class="product-meta">${product.tags.map((tag) => `<span>${tag}</span>`).join("")}</div>
+        <div class="product-price"><strong>₹${product.price}</strong><del>₹${product.mrp}</del><span>${off}% off</span></div>
+        <div class="stock">${state.lang === "mr" ? "In stock" : "In stock"}</div>
+        <div class="product-actions">
+          <button type="button" data-add-cart="${product.sku}">${state.lang === "mr" ? "कार्टमध्ये टाका" : "Add to Cart"}</button>
+          <button type="button" data-buy-now="${product.sku}">${state.lang === "mr" ? "आता खरेदी करा" : "Buy Now"}</button>
+          <button class="quick-btn" type="button" data-quick-view="${product.sku}">${state.lang === "mr" ? "Quick View" : "Quick View"}</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function handleDocumentClick(event) {
+  const add = event.target.closest("[data-add-cart]");
+  const buy = event.target.closest("[data-buy-now]");
+  const quick = event.target.closest("[data-quick-view]");
+  const wish = event.target.closest("[data-wishlist-toggle]");
+  if (add) addToCart(add.dataset.addCart);
+  if (buy) buyNow(buy.dataset.buyNow);
+  if (quick) quickView(quick.dataset.quickView);
+  if (wish) toggleWishlist(wish.dataset.wishlistToggle);
+  if ([els.offerModal, els.quickModal, els.locationModal, els.cartDrawer, els.wishlistDrawer].includes(event.target)) {
+    closeDrawers();
+    setModal(els.offerModal, false);
+    setModal(els.quickModal, false);
+    setModal(els.locationModal, false);
+  }
+}
+
+function addToCart(sku, silent = false) {
+  if (!getProduct(sku)) return;
+  state.cart[sku] = (state.cart[sku] || 0) + 1;
+  save("kantiCart", state.cart);
   renderCart();
+  if (!silent) showToast(state.lang === "mr" ? "Product cart मध्ये add झाला." : "Product added to cart.");
 }
 
-function updateQuantity(sku, delta) {
-  if (!products[sku]) return;
-  cart[sku] = (cart[sku] || 0) + delta;
-  if (cart[sku] <= 0) delete cart[sku];
-  saveCart();
-  renderCart();
-}
-
-function clearCart() {
-  cart = {};
-  saveCart();
-  renderCart();
-}
-
-function saveCart() {
-  localStorage.setItem("kantiCart", JSON.stringify(cart));
-}
-
-function cartEntries() {
-  return Object.entries(cart).filter(([sku, qty]) => products[sku] && qty > 0);
+function buyNow(sku) {
+  const product = getProduct(sku);
+  if (!product) return;
+  addRecent(sku);
+  const intro = state.lang === "mr" ? "नमस्कार Sree Kanti, मला हे product order करायचे आहे:" : "Hello Sree Kanti, I want to order this product:";
+  openWhatsApp(`${intro}\n${product[state.lang].name}\nQty: 1\nTotal: ₹${product.price}${pinText()}`);
 }
 
 function renderCart() {
   const entries = cartEntries();
   const totalQty = entries.reduce((sum, [, qty]) => sum + qty, 0);
-  const total = entries.reduce((sum, [sku, qty]) => sum + products[sku].price * qty, 0);
-
-  cartCountEl.textContent = totalQty;
-  cartTotalEl.textContent = `₹${total}`;
-  cartEmptyEl.classList.toggle("is-visible", entries.length === 0);
-
-  cartItemsEl.innerHTML = entries
-    .map(([sku, qty]) => {
-      const product = products[sku];
-      const name = product[activeLang];
-      return `
-        <div class="cart-item">
-          <div>
-            <h3>${name}</h3>
-            <p>₹${product.price} × ${qty} = ₹${product.price * qty}</p>
-          </div>
-          <div class="cart-qty">
-            <button type="button" data-qty="${sku}" data-delta="-1">−</button>
-            <strong>${qty}</strong>
-            <button type="button" data-qty="${sku}" data-delta="1">+</button>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-
-  cartItemsEl.querySelectorAll("[data-qty]").forEach((button) => {
-    button.addEventListener("click", () => updateQuantity(button.dataset.qty, Number(button.dataset.delta)));
-  });
+  const total = entries.reduce((sum, [sku, qty]) => sum + getProduct(sku).price * qty, 0);
+  els.cartCount.textContent = totalQty;
+  els.cartTotal.textContent = `₹${total}`;
+  els.cartEmpty.classList.toggle("is-visible", entries.length === 0);
+  els.cartItems.innerHTML = entries.map(([sku, qty]) => cartItem(getProduct(sku), qty)).join("");
 }
 
-function setCartOpen(isOpen) {
-  if (!cartDrawer) return;
-  cartDrawer.classList.toggle("is-open", isOpen);
-  cartDrawer.setAttribute("aria-hidden", String(!isOpen));
-  document.body.classList.toggle("menu-open", isOpen);
+function cartItem(product, qty) {
+  return `
+    <div class="cart-item">
+      <img src="${product.image}" alt="${product[state.lang].name}">
+      <div><h3>${product[state.lang].name}</h3><p>₹${product.price} × ${qty} = ₹${product.price * qty}</p></div>
+      <div class="cart-qty">
+        <button type="button" onclick="updateQty('${product.sku}', -1)">−</button>
+        <strong>${qty}</strong>
+        <button type="button" onclick="updateQty('${product.sku}', 1)">+</button>
+      </div>
+    </div>
+  `;
 }
 
-function buyNow(sku) {
-  const product = products[sku];
-  if (!product) return;
-  const message =
-    activeLang === "mr"
-      ? `नमस्कार Sree Kanti, मला ${product.mr} order करायचे आहे.\nQuantity: 1\nTotal: ₹${product.price}`
-      : `Hello Sree Kanti, I want to order ${product.en}.\nQuantity: 1\nTotal: ₹${product.price}`;
-  openWhatsApp(message);
-}
+window.updateQty = function updateQty(sku, delta) {
+  state.cart[sku] = (state.cart[sku] || 0) + delta;
+  if (state.cart[sku] <= 0) delete state.cart[sku];
+  save("kantiCart", state.cart);
+  renderCart();
+};
 
 function checkoutCart() {
   const entries = cartEntries();
-  if (!entries.length) {
-    showToast(activeLang === "mr" ? "Cart रिकामे आहे." : "Cart is empty.");
-    return;
-  }
-
+  if (!entries.length) return showToast(state.lang === "mr" ? "Cart रिकामे आहे." : "Cart is empty.");
   const lines = entries.map(([sku, qty], index) => {
-    const product = products[sku];
-    return `${index + 1}. ${product[activeLang]} - Qty ${qty} - ₹${product.price * qty}`;
+    const product = getProduct(sku);
+    return `${index + 1}. ${product[state.lang].name} - Qty ${qty} - ₹${product.price * qty}`;
   });
-  const total = entries.reduce((sum, [sku, qty]) => sum + products[sku].price * qty, 0);
-  const intro =
-    activeLang === "mr"
-      ? "नमस्कार Sree Kanti, मला खालील products order करायचे आहेत:"
-      : "Hello Sree Kanti, I want to order the following products:";
-  openWhatsApp(`${intro}\n\n${lines.join("\n")}\n\nTotal: ₹${total}`);
+  const total = entries.reduce((sum, [sku, qty]) => sum + getProduct(sku).price * qty, 0);
+  const coupon = $("[data-coupon-input]")?.value.trim();
+  const intro = state.lang === "mr" ? "नमस्कार Sree Kanti, मला खालील order करायचे आहे:" : "Hello Sree Kanti, I want to order:";
+  openWhatsApp(`${intro}\n\n${lines.join("\n")}\n\nTotal: ₹${total}${coupon ? `\nCoupon: ${coupon}` : ""}${pinText()}`);
 }
 
-function openWhatsApp(message) {
-  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+function clearCart() {
+  state.cart = {};
+  save("kantiCart", state.cart);
+  renderCart();
 }
 
+function toggleWishlist(sku) {
+  if (state.wishlist.includes(sku)) state.wishlist = state.wishlist.filter((item) => item !== sku);
+  else state.wishlist.push(sku);
+  save("kantiWishlist", state.wishlist);
+  renderProducts();
+  renderWishlist();
+}
+
+function renderWishlist() {
+  els.wishlistCount.textContent = state.wishlist.length;
+  els.wishlistEmpty.classList.toggle("is-visible", state.wishlist.length === 0);
+  els.wishlistItems.innerHTML = state.wishlist.map((sku) => {
+    const product = getProduct(sku);
+    if (!product) return "";
+    return `
+      <div class="cart-item">
+        <img src="${product.image}" alt="${product[state.lang].name}">
+        <div><h3>${product[state.lang].name}</h3><p>₹${product.price}</p></div>
+        <div class="cart-qty"><button type="button" data-add-cart="${sku}">+</button></div>
+      </div>
+    `;
+  }).join("");
+}
+
+function quickView(sku) {
+  const product = getProduct(sku);
+  if (!product) return;
+  addRecent(sku);
+  const copy = product[state.lang];
+  els.quickModal.innerHTML = `
+    <div class="quick-dialog" role="dialog" aria-modal="true" aria-label="${copy.name}">
+      <button class="round-close" type="button" onclick="document.querySelector('[data-quick-modal]').classList.remove('is-open');document.body.classList.remove('menu-open')">×</button>
+      <img src="${product.image}" alt="${copy.name}">
+      <div>
+        <p class="eyebrow">Quick View</p>
+        <h2>${copy.name}</h2>
+        <div class="stars">★ ${product.rating} (${product.reviews})</div>
+        <div class="product-price"><strong>₹${product.price}</strong><del>₹${product.mrp}</del></div>
+        <p>${copy.desc}</p>
+        <ul>${copy.bullets.map((item) => `<li>${item}</li>`).join("")}</ul>
+        <div class="hero-actions">
+          <button class="button primary" type="button" data-add-cart="${sku}">${state.lang === "mr" ? "कार्टमध्ये टाका" : "Add to Cart"}</button>
+          <button class="button secondary" type="button" data-buy-now="${sku}">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  `;
+  setModal(els.quickModal, true);
+}
+
+function addRecent(sku) {
+  state.recent = [sku, ...state.recent.filter((item) => item !== sku)].slice(0, 4);
+  save("kantiRecent", state.recent);
+  renderRecent();
+}
+
+function renderRecent() {
+  const items = state.recent.map(getProduct).filter(Boolean);
+  els.recentSection.hidden = items.length === 0;
+  els.recentGrid.innerHTML = items.map((product) => `
+    <button class="mini-card" type="button" data-quick-view="${product.sku}">
+      <img src="${product.image}" alt="${product[state.lang].name}">
+      <span><strong>${product[state.lang].name}</strong><br>₹${product.price}</span>
+    </button>
+  `).join("");
+}
+
+function savePincode() {
+  state.pincode = els.pincode.value.trim();
+  localStorage.setItem("kantiPincode", state.pincode);
+  setModal(els.locationModal, false);
+  showToast(state.pincode ? `PIN ${state.pincode} saved.` : "PIN cleared.");
+}
+
+function openDrawer(type) {
+  closeDrawers();
+  const drawer = type === "wishlist" ? els.wishlistDrawer : els.cartDrawer;
+  drawer.classList.add("is-open");
+  drawer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("menu-open");
+}
+
+function closeDrawers() {
+  [els.cartDrawer, els.wishlistDrawer].forEach((drawer) => {
+    drawer?.classList.remove("is-open");
+    drawer?.setAttribute("aria-hidden", "true");
+  });
+  document.body.classList.remove("menu-open");
+}
+
+function setModal(modal, isOpen) {
+  if (!modal) return;
+  modal.classList.toggle("is-open", isOpen);
+  modal.setAttribute("aria-hidden", String(!isOpen));
+  document.body.classList.toggle("menu-open", isOpen);
+}
+
+function startCountdown() {
+  const end = Date.now() + 1000 * 60 * 60 * 7 + 1000 * 60 * 24;
+  setInterval(() => {
+    const left = Math.max(0, end - Date.now());
+    const hours = Math.floor(left / 36e5);
+    const mins = Math.floor((left % 36e5) / 6e4);
+    const secs = Math.floor((left % 6e4) / 1000);
+    els.countdown.innerHTML = `<span>${hours}h</span><span>${mins}m</span><span>${secs}s</span>`;
+  }, 1000);
+}
+
+function cartEntries() {
+  return Object.entries(state.cart).filter(([sku, qty]) => getProduct(sku) && qty > 0);
+}
+function getProduct(sku) { return products.find((product) => product.sku === sku); }
+function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+function pinText() { return state.pincode ? `\nPIN code: ${state.pincode}` : ""; }
+function openWhatsApp(message) { window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank", "noopener"); }
 function showToast(message) {
-  toastEl.textContent = message;
-  toastEl.classList.add("is-visible");
+  els.toast.textContent = message;
+  els.toast.classList.add("is-visible");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2200);
+  toastTimer = setTimeout(() => els.toast.classList.remove("is-visible"), 2200);
 }

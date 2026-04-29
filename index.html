@@ -3,309 +3,237 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sree Kanti | Natural Skin & Bath Care</title>
-    <meta name="description" content="Sree Kanti natural skincare and bath care products with cart, WhatsApp ordering, Marathi and English language options." />
-    <meta property="og:title" content="Sree Kanti | Where Purity Meets Glow" />
-    <meta property="og:description" content="Ubtan, bath salt, bath soap, face mask, face oil and gift hampers." />
+    <title>Sree Kanti Store | Natural Skin & Bath Care</title>
+    <meta name="description" content="Sree Kanti Amazon-style e-commerce storefront with Marathi and English, cart, buy now, offers, wishlist, search and WhatsApp checkout." />
+    <meta property="og:title" content="Sree Kanti Store" />
+    <meta property="og:description" content="Shop ubtan, bath salt, soap, face mask, face oil and gift hampers." />
     <meta property="og:image" content="assets/products/gift-hamper.jpg" />
     <meta name="theme-color" content="#7f3028" />
     <link rel="icon" href="assets/logo.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-active-lang="mr">
-    <header class="site-header" data-header>
-      <a class="brand" href="#home" aria-label="Sree Kanti home">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Sree Kanti Store">
         <img src="assets/logo.png" alt="Sree Kanti logo" />
         <span>Sree Kanti</span>
       </a>
 
-      <button class="menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">
-        <span></span>
-        <span></span>
+      <button class="location-pill" type="button" data-location-open>
+        <span data-lang="mr">डिलिव्हरी तपासा</span>
+        <span data-lang="en">Check Delivery</span>
       </button>
 
-      <nav class="nav-links" data-nav aria-label="Main menu">
-        <a href="#products"><span data-lang="mr">उत्पादने</span><span data-lang="en">Products</span></a>
-        <a href="#ritual"><span data-lang="mr">वापर</span><span data-lang="en">Routine</span></a>
-        <a href="#gifting"><span data-lang="mr">गिफ्टिंग</span><span data-lang="en">Gifting</span></a>
-        <a href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer">Instagram</a>
-      </nav>
+      <form class="search-box" role="search" data-search-form>
+        <select data-category-select aria-label="Category">
+          <option value="all">All</option>
+          <option value="skin">Skin</option>
+          <option value="bath">Bath</option>
+          <option value="gift">Gift</option>
+        </select>
+        <input data-search-input type="search" placeholder="उत्पादन शोधा..." aria-label="Search products" />
+        <button type="submit">
+          <span data-lang="mr">शोधा</span>
+          <span data-lang="en">Search</span>
+        </button>
+      </form>
 
-      <div class="header-actions">
+      <div class="top-actions">
         <div class="language-switch" aria-label="Language selector">
           <button class="active" type="button" data-lang-set="mr">मराठी</button>
           <button type="button" data-lang-set="en">EN</button>
         </div>
-        <button class="cart-button" type="button" data-cart-open>
-          <span data-lang="mr">कार्ट</span><span data-lang="en">Cart</span>
+        <button class="icon-action" type="button" data-wishlist-open>
+          <span data-lang="mr">Wishlist</span>
+          <span data-lang="en">Wishlist</span>
+          <strong data-wishlist-count>0</strong>
+        </button>
+        <button class="icon-action cart-action" type="button" data-cart-open>
+          <span data-lang="mr">कार्ट</span>
+          <span data-lang="en">Cart</span>
           <strong data-cart-count>0</strong>
         </button>
       </div>
     </header>
 
-    <main id="home">
-      <section class="announcement" aria-label="Current offer">
-        <div class="announcement-copy">
-          <span class="offer-badge"><span data-lang="mr">लॉन्च ऑफर</span><span data-lang="en">Launch Offer</span></span>
-          <strong>
-            <span data-lang="mr">Herbal Summer Face Mask आता फक्त ₹1</span>
-            <span data-lang="en">Herbal Summer Face Mask now at just ₹1</span>
-          </strong>
-          <p>
-            <span data-lang="mr">मर्यादित stock. Offer पाहा, cart मध्ये add करा किंवा direct buy now करा.</span>
-            <span data-lang="en">Limited stock. View the offer, add it to cart, or buy now directly.</span>
-          </p>
-        </div>
-        <div class="announcement-actions">
-          <button class="button light" type="button" data-offer-open>
-            <span data-lang="mr">Offer पाहा</span><span data-lang="en">View Offer</span>
-          </button>
-          <button class="button dark" type="button" data-add-cart="face-mask-offer">
-            <span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span>
-          </button>
-          <button class="button dark" type="button" data-buy-now="face-mask-offer">
-            <span data-lang="mr">Buy Now</span><span data-lang="en">Buy Now</span>
-          </button>
-        </div>
-      </section>
+    <nav class="subnav" aria-label="Store navigation">
+      <a href="#products"><span data-lang="mr">सर्व उत्पादने</span><span data-lang="en">All Products</span></a>
+      <a href="#deals"><span data-lang="mr">आजची ऑफर</span><span data-lang="en">Today Deal</span></a>
+      <a href="#gifting"><span data-lang="mr">गिफ्टिंग</span><span data-lang="en">Gifting</span></a>
+      <a href="#help"><span data-lang="mr">मदत</span><span data-lang="en">Help</span></a>
+      <a href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer">@kantiubtan</a>
+    </nav>
 
-      <section class="hero">
-        <div class="hero-image">
-          <img src="assets/products/gift-hamper.jpg" alt="Sree Kanti product collection" />
-        </div>
+    <main id="home">
+      <section class="hero-store">
         <div class="hero-copy">
           <p class="eyebrow">Where Purity Meets Glow</p>
           <h1>
-            <span data-lang="mr">नैसर्गिक त्वचा काळजी आणि स्नानाचा premium अनुभव.</span>
-            <span data-lang="en">Natural skin care and premium bath rituals.</span>
+            <span data-lang="mr">Sree Kanti नैसर्गिक skincare store</span>
+            <span data-lang="en">Sree Kanti natural skincare store</span>
           </h1>
           <p>
-            <span data-lang="mr">Sree Kanti मध्ये उटणे, bath salts, bath soap, face mask, face oil आणि सुंदर gift hampers मिळतात. प्रत्येक product सध्या introductory price ₹1 मध्ये दाखवले आहे.</span>
-            <span data-lang="en">Sree Kanti offers ubtan, bath salts, bath soap, face mask, face oil, and elegant gift hampers. Every product is currently shown at an introductory price of ₹1.</span>
+            <span data-lang="mr">उटणे, बाथ सॉल्ट, सोप, फेस मास्क, फेस ऑईल आणि गिफ्ट हॅम्पर. प्रत्येक उत्पादन सध्या ₹1 introductory price मध्ये.</span>
+            <span data-lang="en">Ubtan, bath salt, soap, face mask, face oil and gift hampers. Every product is currently at an introductory price of ₹1.</span>
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#products"><span data-lang="mr">उत्पादने पाहा</span><span data-lang="en">Shop Products</span></a>
-            <button class="button secondary" type="button" data-cart-open><span data-lang="mr">कार्ट उघडा</span><span data-lang="en">Open Cart</span></button>
+            <a class="button primary" href="#products"><span data-lang="mr">Shop Now</span><span data-lang="en">Shop Now</span></a>
+            <button class="button secondary" type="button" data-offer-open><span data-lang="mr">Offer पाहा</span><span data-lang="en">View Offer</span></button>
+          </div>
+        </div>
+        <div class="hero-deal" id="deals">
+          <img src="assets/offers/face-mask-offer.jpg" alt="Herbal Summer Face Mask offer" />
+          <div class="deal-card">
+            <span class="deal-label"><span data-lang="mr">Limited stock</span><span data-lang="en">Limited stock</span></span>
+            <h2>Herbal Summer Face Mask</h2>
+            <div class="price-line"><strong>₹1</strong><del>₹65</del><span>98% OFF</span></div>
+            <p><span data-lang="mr">Offer संपण्याआधी order करा.</span><span data-lang="en">Order before the offer ends.</span></p>
+            <div class="countdown" data-countdown aria-label="Offer countdown"></div>
+            <div class="deal-actions">
+              <button class="button primary" type="button" data-add-cart="face-mask-offer"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
+              <button class="button secondary" type="button" data-buy-now="face-mask-offer">Buy Now</button>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="trust-bar" aria-label="brand highlights">
-        <div>
-          <strong><span data-lang="mr">Natural-care inspired</span><span data-lang="en">Natural-care inspired</span></strong>
-          <span data-lang="mr">सौम्य, सुगंधी आणि रोजच्या routine मध्ये सहज बसणारी उत्पादने.</span>
-          <span data-lang="en">Gentle, aromatic products made for everyday self-care routines.</span>
-        </div>
-        <div>
-          <strong><span data-lang="mr">Premium presentation</span><span data-lang="en">Premium presentation</span></strong>
-          <span data-lang="mr">Elegant jars, pouches, labels आणि gifting-ready look.</span>
-          <span data-lang="en">Elegant jars, pouches, labels, and a polished gifting-ready look.</span>
-        </div>
-        <div>
-          <strong><span data-lang="mr">WhatsApp ordering</span><span data-lang="en">WhatsApp ordering</span></strong>
-          <span data-lang="mr">Cart तयार करा आणि order details WhatsApp वर पाठवा.</span>
-          <span data-lang="en">Build your cart and send order details directly on WhatsApp.</span>
-        </div>
+      <section class="store-benefits" aria-label="Shopping benefits">
+        <div><strong>WhatsApp Checkout</strong><span data-lang="mr">Cart order message मध्ये तयार होतो</span><span data-lang="en">Cart converts into an order message</span></div>
+        <div><strong>Secure Enquiry</strong><span data-lang="mr">Direct phone, email आणि Instagram</span><span data-lang="en">Direct phone, email and Instagram</span></div>
+        <div><strong>Gift Ready</strong><span data-lang="mr">Bulk आणि custom hampers साठी योग्य</span><span data-lang="en">Ideal for bulk and custom hampers</span></div>
+        <div><strong>Intro Price</strong><span data-lang="mr">सर्व products ₹1 दाखवले आहेत</span><span data-lang="en">All products shown at ₹1</span></div>
       </section>
 
-      <section class="section products-section" id="products">
-        <div class="section-head">
-          <p class="eyebrow">Product Range</p>
-          <h2>
-            <span data-lang="mr">कांतीची skincare आणि bath care range</span>
-            <span data-lang="en">Sree Kanti skincare and bath care range</span>
-          </h2>
-          <p>
-            <span data-lang="mr">प्रत्येक product ₹1. Add to Cart वापरा किंवा लगेच Buy Now करा.</span>
-            <span data-lang="en">Every product is ₹1. Add items to cart or use Buy Now for instant ordering.</span>
-          </p>
-        </div>
+      <section class="shopping-layout" id="products">
+        <aside class="filters">
+          <div class="filter-card">
+            <h2><span data-lang="mr">फिल्टर</span><span data-lang="en">Filters</span></h2>
+            <button class="filter-chip active" type="button" data-filter="all">All</button>
+            <button class="filter-chip" type="button" data-filter="skin">Skin Care</button>
+            <button class="filter-chip" type="button" data-filter="bath">Bath Care</button>
+            <button class="filter-chip" type="button" data-filter="gift">Gifting</button>
+          </div>
+          <div class="filter-card">
+            <h2><span data-lang="mr">Customer Rating</span><span data-lang="en">Customer Rating</span></h2>
+            <label><input type="checkbox" data-rating-filter value="4.5" /> 4.5★ & above</label>
+          </div>
+          <div class="filter-card">
+            <h2><span data-lang="mr">Quick Links</span><span data-lang="en">Quick Links</span></h2>
+            <button type="button" data-cart-open><span data-lang="mr">Cart उघडा</span><span data-lang="en">Open Cart</span></button>
+            <button type="button" data-wishlist-open>Wishlist</button>
+          </div>
+        </aside>
 
-        <div class="product-grid">
-          <article class="product-card">
-            <img src="assets/products/ubtan.jpg" alt="Sree Kanti Ubtan" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">दैनंदिन glow care</span><span data-lang="en">Daily glow care</span></span>
-              <h3><span data-lang="mr">कांती उटणे</span><span data-lang="en">Kanti Ubtan</span></h3>
-              <p><span data-lang="mr">पारंपरिक उटण्यापासून प्रेरित powder cleanser. त्वचा स्वच्छ, मऊ आणि ताजीतवानी वाटण्यासाठी.</span><span data-lang="en">A traditional ubtan-inspired powder cleanser for a clean, soft, refreshed skin feel.</span></p>
-              <ul>
-                <li><span data-lang="mr">दूध, गुलाबजल, दही किंवा पाण्यासोबत paste करा</span><span data-lang="en">Mix with milk, rose water, curd, or water</span></li>
-                <li><span data-lang="mr">चेहरा, मान, हात आणि पायांसाठी उपयोगी</span><span data-lang="en">Suitable for face, neck, hands, and feet</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="ubtan"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="ubtan"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
+        <section class="product-results">
+          <div class="results-head">
+            <div>
+              <p class="eyebrow">Sree Kanti Store</p>
+              <h2><span data-lang="mr">Products for you</span><span data-lang="en">Products for you</span></h2>
+              <p data-result-count></p>
             </div>
-          </article>
-
-          <article class="product-card">
-            <img src="assets/products/bath-salt.jpg" alt="Sree Kanti Bath Salt" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">आरामदायी स्नान</span><span data-lang="en">Relaxing bath</span></span>
-              <h3><span data-lang="mr">कांती बाथ सॉल्ट</span><span data-lang="en">Kanti Bath Salt</span></h3>
-              <p><span data-lang="mr">गुलाब पाकळ्या आणि mineral salt inspired blend. Foot soak आणि bath soak साठी.</span><span data-lang="en">A rose-petal and mineral salt inspired blend for foot soaks and relaxing bath rituals.</span></p>
-              <ul>
-                <li><span data-lang="mr">गरम पाण्यात मिसळून वापरा</span><span data-lang="en">Mix in warm water before use</span></li>
-                <li><span data-lang="mr">Pedicure routine आणि gifting साठी योग्य</span><span data-lang="en">Great for pedicure routines and gifting</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="bath-salt"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="bath-salt"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <img src="assets/products/bath-soap.jpg" alt="Sree Kanti Bath Soap" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">सौम्य cleansing</span><span data-lang="en">Gentle cleansing</span></span>
-              <h3><span data-lang="mr">कांती बाथ सोप</span><span data-lang="en">Kanti Bath Soap</span></h3>
-              <p><span data-lang="mr">Herbal handmade-style bathing bar. रोजच्या स्नानासाठी gentle cleansing feel.</span><span data-lang="en">A herbal handmade-style bathing bar for a gentle everyday cleansing feel.</span></p>
-              <ul>
-                <li><span data-lang="mr">Daily bath routine मध्ये वापरण्यास सोपा</span><span data-lang="en">Easy to use in a daily bath routine</span></li>
-                <li><span data-lang="mr">Hamper add-on म्हणून चांगला</span><span data-lang="en">Works beautifully as a hamper add-on</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="bath-soap"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="bath-soap"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
-            </div>
-          </article>
-
-          <article class="product-card offer-product">
-            <img src="assets/products/face-mask.jpg" alt="Sree Kanti Face Mask" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">ऑफर product</span><span data-lang="en">Offer product</span></span>
-              <h3><span data-lang="mr">Herbal Summer Face Mask</span><span data-lang="en">Herbal Summer Face Mask</span></h3>
-              <p><span data-lang="mr">Cooling, tan removal आणि deep cleansing inspired face mask powder. Offer item सुद्धा ₹1.</span><span data-lang="en">Cooling, tan-removal, and deep-cleansing inspired face mask powder. Offer item is also ₹1.</span></p>
-              <ul>
-                <li><span data-lang="mr">Rose water, milk किंवा aloe gel सोबत mix करा</span><span data-lang="en">Mix with rose water, milk, or aloe gel</span></li>
-                <li><span data-lang="mr">10-12 मिनिटांनी पूर्ण dry होण्याआधी rinse करा</span><span data-lang="en">Rinse before fully dry after 10-12 minutes</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="face-mask-offer"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="face-mask-offer"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <img src="assets/products/face-oil.jpg" alt="Sree Kanti Face Oil" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">पोषणदायी finish</span><span data-lang="en">Nourishing finish</span></span>
-              <h3><span data-lang="mr">कांती फेस ऑईल</span><span data-lang="en">Kanti Face Oil</span></h3>
-              <p><span data-lang="mr">Night skincare routine नंतर soft, nourished finish देण्यासाठी facial oil.</span><span data-lang="en">A facial oil for a soft, nourished finish after your night skincare routine.</span></p>
-              <ul>
-                <li><span data-lang="mr">स्वच्छ चेहऱ्यावर 2-3 थेंब massage करा</span><span data-lang="en">Massage 2-3 drops on a clean face</span></li>
-                <li><span data-lang="mr">Glow finish आणि night care साठी</span><span data-lang="en">For glow finish and night care</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="face-oil"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="face-oil"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
-            </div>
-          </article>
-
-          <article class="product-card featured-card">
-            <img src="assets/products/gift-hamper.jpg" alt="Sree Kanti Gift Hamper" />
-            <div class="product-body">
-              <span class="product-type"><span data-lang="mr">सणासुदीचे gifting</span><span data-lang="en">Festive gifting</span></span>
-              <h3><span data-lang="mr">कांती गिफ्ट हॅम्पर</span><span data-lang="en">Kanti Gift Hamper</span></h3>
-              <p><span data-lang="mr">Skincare आणि bath care products चे सुंदर gifting combination. सण, corporate gifting आणि return gifts साठी.</span><span data-lang="en">A curated skincare and bath care gifting combination for festivals, corporate gifting, and return gifts.</span></p>
-              <ul>
-                <li><span data-lang="mr">Budget आणि quantity नुसार custom options</span><span data-lang="en">Custom options based on budget and quantity</span></li>
-                <li><span data-lang="mr">Premium labels आणि elegant presentation</span><span data-lang="en">Premium labels and elegant presentation</span></li>
-              </ul>
-              <div class="product-purchase">
-                <strong>₹1</strong>
-                <button type="button" data-add-cart="gift-hamper"><span data-lang="mr">कार्टमध्ये टाका</span><span data-lang="en">Add to Cart</span></button>
-                <button type="button" data-buy-now="gift-hamper"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-              </div>
-            </div>
-          </article>
-        </div>
+            <select data-sort aria-label="Sort products">
+              <option value="featured">Featured</option>
+              <option value="rating">Top rated</option>
+              <option value="name">Name A-Z</option>
+              <option value="price">Price low to high</option>
+            </select>
+          </div>
+          <div class="product-grid" data-product-grid></div>
+        </section>
       </section>
 
-      <section class="ritual-section" id="ritual">
+      <section class="recent-section" data-recent-section hidden>
         <div class="section-head">
-          <p class="eyebrow">Daily To Festive Routine</p>
-          <h2><span data-lang="mr">तुमच्या routine मध्ये कांती कशी वापराल?</span><span data-lang="en">How to use Sree Kanti in your routine</span></h2>
+          <p class="eyebrow">Recently Viewed</p>
+          <h2><span data-lang="mr">तुम्ही पाहिलेले products</span><span data-lang="en">Products you viewed</span></h2>
         </div>
-        <div class="ritual-grid">
-          <div class="ritual-step"><span>01</span><h3>Cleanse</h3><p><span data-lang="mr">Bath Soap किंवा Ubtan वापरून त्वचा स्वच्छ करा.</span><span data-lang="en">Cleanse with Bath Soap or Ubtan.</span></p></div>
-          <div class="ritual-step"><span>02</span><h3>Mask</h3><p><span data-lang="mr">Face Mask 10-12 मिनिटे ठेवा आणि धुवा.</span><span data-lang="en">Apply Face Mask for 10-12 minutes and rinse.</span></p></div>
-          <div class="ritual-step"><span>03</span><h3>Nourish</h3><p><span data-lang="mr">Face Oil चे 2-3 थेंब हलक्या हाताने massage करा.</span><span data-lang="en">Massage 2-3 drops of Face Oil gently.</span></p></div>
-          <div class="ritual-step"><span>04</span><h3>Relax</h3><p><span data-lang="mr">Bath Salt गरम पाण्यात मिसळून foot soak करा.</span><span data-lang="en">Use Bath Salt in warm water for a foot soak.</span></p></div>
-        </div>
+        <div class="mini-grid" data-recent-grid></div>
       </section>
 
       <section class="gifting-section" id="gifting">
-        <div class="gifting-image"><img src="assets/products/gift-hamper.jpg" alt="Sree Kanti gifting collection" /></div>
-        <div class="gifting-copy">
+        <img src="assets/products/gift-hamper.jpg" alt="Sree Kanti gift hamper" />
+        <div>
           <p class="eyebrow">For Celebrations</p>
-          <h2><span data-lang="mr">सण, समारंभ आणि gifting साठी refined hampers</span><span data-lang="en">Refined hampers for festivals, events, and gifting</span></h2>
-          <p><span data-lang="mr">Product mix, label message आणि quantity तुमच्या प्रसंगानुसार ठरवता येते.</span><span data-lang="en">Product mix, label message, and quantity can be customized for your occasion.</span></p>
-          <div class="occasion-pills"><span>दिवाळी</span><span>Haldi-Kumkum</span><span>Wedding</span><span>Return gifts</span><span>Corporate gifting</span></div>
+          <h2><span data-lang="mr">Custom hampers for every occasion</span><span data-lang="en">Custom hampers for every occasion</span></h2>
+          <p><span data-lang="mr">दिवाळी, हळदी-कुंकू, wedding return gifts आणि corporate gifting साठी custom product mix तयार करता येतो.</span><span data-lang="en">Create a custom product mix for festivals, weddings, return gifts and corporate gifting.</span></p>
+          <div class="occasion-pills"><span>Diwali</span><span>Haldi-Kumkum</span><span>Wedding</span><span>Return gifts</span><span>Corporate</span></div>
         </div>
       </section>
 
-      <section class="contact-section" id="contact">
+      <section class="info-section" id="help">
         <div>
-          <p class="eyebrow">Order & Enquiry</p>
-          <h2><span data-lang="mr">Order details WhatsApp वर पाठवा.</span><span data-lang="en">Send order details on WhatsApp.</span></h2>
-          <p><span data-lang="mr">Cart checkout केल्यावर products, quantity आणि total automatic message मध्ये येतील.</span><span data-lang="en">Cart checkout creates an automatic WhatsApp message with products, quantity, and total.</span></p>
+          <p class="eyebrow">How Ordering Works</p>
+          <h2><span data-lang="mr">Amazon-style browsing, WhatsApp checkout</span><span data-lang="en">Amazon-style browsing, WhatsApp checkout</span></h2>
+          <ol>
+            <li><span data-lang="mr">Search किंवा filters वापरून product निवडा.</span><span data-lang="en">Use search or filters to choose products.</span></li>
+            <li><span data-lang="mr">Add to Cart किंवा Buy Now करा.</span><span data-lang="en">Add to Cart or use Buy Now.</span></li>
+            <li><span data-lang="mr">Checkout केल्यावर WhatsApp message तयार होईल.</span><span data-lang="en">Checkout creates a WhatsApp order message.</span></li>
+          </ol>
         </div>
         <div class="contact-card">
           <a class="contact-line" href="mailto:kantiubtan@gmail.com"><span>Email</span><strong>kantiubtan@gmail.com</strong></a>
           <a class="contact-line" href="tel:+918208427976"><span>Phone</span><strong>8208427976</strong></a>
           <a class="contact-line" href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer"><span>Instagram</span><strong>@kantiubtan</strong></a>
-          <button class="button primary full" type="button" data-cart-open><span data-lang="mr">कार्ट checkout करा</span><span data-lang="en">Checkout Cart</span></button>
         </div>
       </section>
     </main>
 
     <div class="offer-modal" data-offer-modal aria-hidden="true">
       <div class="offer-dialog" role="dialog" aria-modal="true" aria-label="Herbal Summer Face Mask offer">
-        <button class="offer-close" type="button" data-offer-close aria-label="Close offer">×</button>
+        <button class="round-close" type="button" data-offer-close aria-label="Close offer">×</button>
         <img src="assets/offers/face-mask-offer.jpg" alt="Herbal Summer Face Mask introductory offer" />
-        <div class="offer-dialog-actions">
-          <button class="button primary" type="button" data-add-cart="face-mask-offer"><span data-lang="mr">Offer cart मध्ये टाका</span><span data-lang="en">Add Offer to Cart</span></button>
-          <button class="button primary" type="button" data-buy-now="face-mask-offer"><span data-lang="mr">आता खरेदी करा</span><span data-lang="en">Buy Now</span></button>
-          <button class="button secondary" type="button" data-offer-close><span data-lang="mr">बंद करा</span><span data-lang="en">Close</span></button>
+        <div class="modal-actions">
+          <button class="button primary" type="button" data-add-cart="face-mask-offer">Add to Cart</button>
+          <button class="button secondary" type="button" data-buy-now="face-mask-offer">Buy Now</button>
         </div>
       </div>
     </div>
 
+    <div class="quick-modal" data-quick-modal aria-hidden="true"></div>
+
     <aside class="cart-drawer" data-cart-drawer aria-hidden="true">
       <div class="cart-panel">
         <div class="cart-head">
-          <div>
-            <p class="eyebrow">Cart</p>
-            <h2><span data-lang="mr">तुमचे कार्ट</span><span data-lang="en">Your Cart</span></h2>
-          </div>
-          <button class="cart-close" type="button" data-cart-close aria-label="Close cart">×</button>
+          <div><p class="eyebrow">Cart</p><h2><span data-lang="mr">तुमचे कार्ट</span><span data-lang="en">Your Cart</span></h2></div>
+          <button class="round-close" type="button" data-cart-close aria-label="Close cart">×</button>
         </div>
         <div class="cart-items" data-cart-items></div>
-        <div class="cart-empty" data-cart-empty>
-          <span data-lang="mr">तुमचे cart अजून रिकामे आहे.</span>
-          <span data-lang="en">Your cart is empty.</span>
+        <div class="cart-empty" data-cart-empty><span data-lang="mr">Cart रिकामे आहे.</span><span data-lang="en">Your cart is empty.</span></div>
+        <div class="coupon-box">
+          <input data-coupon-input placeholder="Coupon code: KANTI" />
+          <button type="button" data-apply-coupon>Apply</button>
         </div>
         <div class="cart-summary">
           <span><span data-lang="mr">एकूण</span><span data-lang="en">Total</span></span>
           <strong data-cart-total>₹0</strong>
         </div>
         <div class="cart-actions">
-          <button class="button secondary full" type="button" data-cart-clear><span data-lang="mr">Cart clear करा</span><span data-lang="en">Clear Cart</span></button>
+          <button class="button secondary full" type="button" data-cart-clear>Clear Cart</button>
           <button class="button primary full" type="button" data-cart-checkout><span data-lang="mr">WhatsApp वर order पाठवा</span><span data-lang="en">Send Order on WhatsApp</span></button>
         </div>
       </div>
     </aside>
+
+    <aside class="wishlist-drawer" data-wishlist-drawer aria-hidden="true">
+      <div class="cart-panel">
+        <div class="cart-head">
+          <div><p class="eyebrow">Wishlist</p><h2>Wishlist</h2></div>
+          <button class="round-close" type="button" data-wishlist-close aria-label="Close wishlist">×</button>
+        </div>
+        <div class="cart-items" data-wishlist-items></div>
+        <div class="cart-empty" data-wishlist-empty>Your wishlist is empty.</div>
+      </div>
+    </aside>
+
+    <div class="location-modal" data-location-modal aria-hidden="true">
+      <div class="location-card">
+        <button class="round-close" type="button" data-location-close aria-label="Close delivery modal">×</button>
+        <h2><span data-lang="mr">Delivery तपासा</span><span data-lang="en">Check Delivery</span></h2>
+        <p><span data-lang="mr">तुमचा PIN code टाका. आम्ही WhatsApp वर delivery confirm करू.</span><span data-lang="en">Enter your PIN code. Delivery will be confirmed on WhatsApp.</span></p>
+        <input data-pincode maxlength="6" inputmode="numeric" placeholder="PIN code" />
+        <button class="button primary full" type="button" data-save-pincode>Save PIN</button>
+      </div>
+    </div>
 
     <div class="toast" data-toast aria-live="polite"></div>
 
