@@ -130,10 +130,13 @@ const state = {
   sort: "featured",
   minRating: false,
   cart: JSON.parse(localStorage.getItem("kantiCart") || "{}"),
-  wishlist: JSON.parse(localStorage.getItem("kantiWishlist") || "[]"),
+  wishlist: [],
   recent: JSON.parse(localStorage.getItem("kantiRecent") || "[]"),
   pincode: localStorage.getItem("kantiPincode") || "",
-  user: JSON.parse(localStorage.getItem("kantiUser") || "null"),
+  user: null,
+  users: JSON.parse(localStorage.getItem("kantiUsersDb") || "[]"),
+  ordersByUser: JSON.parse(localStorage.getItem("kantiOrdersDb") || "{}"),
+  accountMode: "signup",
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -166,6 +169,13 @@ const els = {
   recentSection: $("[data-recent-section]"),
   recentGrid: $("[data-recent-grid]"),
   toast: $("[data-toast]"),
+  dashboard: $("[data-dashboard]"),
+  dashboardWelcome: $("[data-dashboard-welcome]"),
+  orderHistory: $("[data-order-history]"),
+  dashboardWishlist: $("[data-dashboard-wishlist]"),
+  addressBook: $("[data-address-book]"),
+  accountModeInput: $("[name=mode]"),
+  accountSubmit: $("[data-account-submit]"),
   countdown: $("[data-countdown]"),
 };
 
@@ -176,16 +186,25 @@ init();
 function init() {
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
+  hydrateSession();
   if (els.pincode) els.pincode.value = state.pincode;
   populateAccountForm();
   updateLanguageButtons();
   updateAccountUi();
   bindEvents();
+  setAccountMode("signup");
   renderProducts();
   renderCart();
   renderWishlist();
+  renderDashboard();
   renderRecent();
   startCountdown();
+}
+
+function hydrateSession() {
+  const activeEmail = localStorage.getItem("kantiActiveUser");
+  state.user = state.users.find((u) => u.email === activeEmail) || null;
+  state.wishlist = state.user?.wishlist || [];
 }
 
 function bindEvents() {
@@ -236,6 +255,7 @@ function bindEvents() {
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
   els.accountForm?.addEventListener("submit", saveAccount);
   $("[data-account-logout]")?.addEventListener("click", logoutAccount);
+  $$("[data-account-tab]").forEach((button) => button.addEventListener("click", () => setAccountMode(button.dataset.accountTab)));
   document.addEventListener("click", handleDocumentClick);
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -246,6 +266,14 @@ function bindEvents() {
       setModal(els.accountModal, false);
     }
   });
+}
+
+function setAccountMode(mode) {
+  state.accountMode = mode;
+  if (els.accountModeInput) els.accountModeInput.value = mode;
+  $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
+  $$("[data-signup-only]").forEach((field) => field.hidden = mode !== "signup");
+  if (els.accountSubmit) els.accountSubmit.textContent = mode === "signup" ? "Create Account" : "Login";
 }
 
 function setLanguage(lang) {
@@ -259,6 +287,7 @@ function setLanguage(lang) {
   renderProducts();
   renderCart();
   renderWishlist();
+  renderDashboard();
   renderRecent();
 }
 
@@ -344,27 +373,50 @@ function handleDocumentClick(event) {
 function saveAccount(event) {
   event.preventDefault();
   const data = new FormData(els.accountForm);
-  state.user = {
-    name: String(data.get("name") || "").trim(),
-    phone: String(data.get("phone") || "").trim(),
-    email: String(data.get("email") || "").trim(),
-    password: String(data.get("password") || "").trim(),
-    address: String(data.get("address") || "").trim(),
-    city: String(data.get("city") || "").trim(),
-    pincode: String(data.get("pincode") || "").trim(),
-  };
-  localStorage.setItem("kantiUser", JSON.stringify(state.user));
-  state.pincode = state.user.pincode;
+  const mode = String(data.get("mode") || state.accountMode);
+  const email = String(data.get("email") || "").trim().toLowerCase();
+  const password = String(data.get("password") || "").trim();
+  if (!email || !password) return showToast("Email and password are required.");
+  const idx = state.users.findIndex((u) => u.email === email);
+
+  if (mode === "login") {
+    if (idx < 0) return showToast("Account not found. Please sign up first.");
+    if (state.users[idx].password !== password) return showToast("Incorrect password.");
+    state.user = state.users[idx];
+  } else {
+    const account = {
+      name: String(data.get("name") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      email,
+      password,
+      address: String(data.get("address") || "").trim(),
+      city: String(data.get("city") || "").trim(),
+      pincode: String(data.get("pincode") || "").trim(),
+      wishlist: idx >= 0 ? state.users[idx].wishlist || [] : [],
+    };
+    if (!account.name || !account.phone || !account.address || !account.city || !account.pincode) return showToast("Please complete full profile details.");
+    if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Email already exists with different password.");
+    if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
+    else state.users.push(account);
+    state.user = idx >= 0 ? state.users[idx] : account;
+  }
+  state.wishlist = state.user.wishlist || [];
+  localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
+  localStorage.setItem("kantiActiveUser", state.user.email);
+  state.pincode = state.user.pincode || state.pincode;
   localStorage.setItem("kantiPincode", state.pincode);
-  if (els.pincode) els.pincode.value = state.pincode;
+  populateAccountForm();
   updateAccountUi();
+  renderWishlist();
+  renderDashboard();
   setModal(els.accountModal, false);
-  showToast(state.lang === "mr" ? "Login आणि address save झाले." : "Login and address saved.");
+  showToast(mode === "signup" ? "Account created successfully." : "Welcome back.");
 }
 
 function logoutAccount() {
   state.user = null;
-  localStorage.removeItem("kantiUser");
+  state.wishlist = [];
+  localStorage.removeItem("kantiActiveUser");
   els.accountForm?.reset();
   updateAccountUi();
   showToast(state.lang === "mr" ? "Logout झाले." : "Logged out.");
@@ -454,6 +506,16 @@ function checkoutCart() {
   const total = entries.reduce((sum, [sku, qty]) => sum + getProduct(sku).price * qty, 0);
   const coupon = $("[data-coupon-input]")?.value.trim();
   const intro = state.lang === "mr" ? "नमस्कार Sree Kanti, मला खालील order करायचे आहे:" : "Hello Sree Kanti, I want to order:";
+  const userKey = state.user?.email || "guest";
+  state.ordersByUser[userKey] = state.ordersByUser[userKey] || [];
+  state.ordersByUser[userKey].unshift({
+    id: Date.now(),
+    items: entries,
+    total,
+    createdAt: new Date().toISOString(),
+  });
+  localStorage.setItem("kantiOrdersDb", JSON.stringify(state.ordersByUser));
+  renderDashboard();
   openWhatsApp(`${intro}\n\n${lines.join("\n")}\n\nTotal: ₹${total}${coupon ? `\nCoupon: ${coupon}` : ""}${customerText()}${pinText()}`);
 }
 
@@ -466,9 +528,15 @@ function clearCart() {
 function toggleWishlist(sku) {
   if (state.wishlist.includes(sku)) state.wishlist = state.wishlist.filter((item) => item !== sku);
   else state.wishlist.push(sku);
-  save("kantiWishlist", state.wishlist);
+  if (state.user) {
+    state.user.wishlist = state.wishlist;
+    const idx = state.users.findIndex((u) => u.email === state.user.email);
+    if (idx >= 0) state.users[idx].wishlist = [...state.wishlist];
+    localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
+  }
   renderProducts();
   renderWishlist();
+  renderDashboard();
 }
 
 function renderWishlist() {
@@ -528,6 +596,20 @@ function renderRecent() {
       <span><strong>${product[state.lang].name}</strong><br>₹${product.price}</span>
     </button>
   `).join("");
+}
+
+
+function renderDashboard() {
+  if (!els.dashboard) return;
+  const loggedIn = Boolean(state.user?.email);
+  els.dashboard.hidden = !loggedIn;
+  if (!loggedIn) return;
+  els.dashboardWelcome.textContent = `Welcome back, ${state.user.name || "Customer"}`;
+  const orders = state.ordersByUser[state.user.email] || [];
+  els.orderHistory.innerHTML = orders.length ? orders.slice(0, 6).map((order) => `<div class="dashboard-item"><span>${new Date(order.createdAt).toLocaleDateString()} • ₹${order.total}</span><span><button type="button" onclick="addToCart('ubtan')">Re-order Ubtan</button> <button type="button" onclick="addToCart('face-oil')">Re-order Face Oil</button></span></div>`).join("") : "<p>No orders yet.</p>";
+  const wishSkus = ["bath-salt", "face-mask-offer"].filter((sku) => state.wishlist.includes(sku));
+  els.dashboardWishlist.innerHTML = wishSkus.length ? wishSkus.map((sku) => `<div class="dashboard-item"><span>${getProduct(sku)[state.lang].name}</span><button type="button" data-add-cart="${sku}">Move to cart</button></div>`).join("") : "<p>Save Bath Salts or Face Mask for later.</p>";
+  els.addressBook.innerHTML = `<div class="address-chip"><strong>Shipping/Billing</strong><br>${state.user.address}, ${state.user.city} - ${state.user.pincode}<br>Phone: ${state.user.phone}</div><p>Mobile-Friendly checkout enabled.</p>`;
 }
 
 function savePincode() {

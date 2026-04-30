@@ -431,3 +431,16 @@ p { color: var(--muted); }
   .cart-qty { grid-column: 2; }
   .account-form { grid-template-columns: 1fr; }
 }
+
+.customer-dashboard { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
+.dashboard-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
+.dashboard-card { padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.dashboard-card h4 { margin: 0 0 8px; color: var(--teal); }
+.dashboard-item { display:flex; justify-content:space-between; gap:8px; margin:6px 0; font-size:.92rem; }
+.dashboard-item button { border:1px solid var(--line); background:var(--cream); border-radius:6px; padding:4px 8px; font-weight:700; cursor:pointer; }
+.address-chip { padding:8px; margin:6px 0; border:1px solid var(--line); border-radius:6px; background:var(--paper); }
+.account-promo{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:22px clamp(18px,4vw,48px);margin:0 clamp(0px,0vw,0px);background:#fff;border-block:1px solid var(--line)}
+.account-tabs{display:flex;gap:8px;margin:10px 0}
+.account-tabs button{padding:8px 14px;border:1px solid var(--line);background:#fff;border-radius:999px;font-weight:800;cursor:pointer}
+.account-tabs button.active{background:var(--maroon);color:#fff}
+@media (max-width:620px){.account-promo{flex-direction:column;align-items:flex-start}}

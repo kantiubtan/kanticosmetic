@@ -107,6 +107,15 @@
         <div><strong>Intro Price</strong><span data-lang="mr">सर्व products ₹1 दाखवले आहेत</span><span data-lang="en">All products shown at ₹1</span></div>
       </section>
 
+      <section class="account-promo" aria-label="Customer account access">
+        <div>
+          <p class="eyebrow">Customer Account Portal</p>
+          <h2><span data-lang="mr">नवीन ग्राहक? Sign up करा आणि order history save करा</span><span data-lang="en">New customer? Sign up to save your orders and details</span></h2>
+          <p><span data-lang="mr">एकदा नोंदणी केल्यावर पुढच्या वेळी फक्त login करा आणि wishlist, address book, order history ताबडतोब मिळवा.</span><span data-lang="en">Register once, then log in anytime to continue with your wishlist, address book and order history.</span></p>
+        </div>
+        <button class="button primary" type="button" data-account-open>Login / Sign up</button>
+      </section>
+
       <section class="shopping-layout" id="products">
         <aside class="filters">
           <div class="filter-card">
@@ -247,42 +256,64 @@
       <div class="account-card">
         <button class="round-close" type="button" data-account-close aria-label="Close account">×</button>
         <p class="eyebrow">Account</p>
-        <h2><span data-lang="mr">Login आणि Delivery Address</span><span data-lang="en">Login and Delivery Address</span></h2>
+        <h2><span data-lang="mr">Customer Login व Dashboard</span><span data-lang="en">Customer Login & Dashboard</span></h2>
         <p><span data-lang="mr">ही माहिती या browser मध्ये save होईल आणि checkout message मध्ये address जोडला जाईल.</span><span data-lang="en">This information is saved in this browser and added to the checkout message.</span></p>
+        <div class="account-tabs">
+          <button type="button" class="active" data-account-tab="signup">Sign Up</button>
+          <button type="button" data-account-tab="login">Login</button>
+        </div>
         <form class="account-form" data-account-form>
+          <input type="hidden" name="mode" value="signup" />
           <label>
             <span data-lang="mr">नाव</span><span data-lang="en">Full name</span>
-            <input name="name" required autocomplete="name" />
+            <input name="name" autocomplete="name" />
           </label>
           <label>
             <span data-lang="mr">मोबाइल नंबर</span><span data-lang="en">Mobile number</span>
-            <input name="phone" required inputmode="tel" autocomplete="tel" />
+            <input name="phone" inputmode="tel" autocomplete="tel" />
           </label>
           <label>
             <span>Email</span>
-            <input name="email" type="email" autocomplete="email" />
+            <input name="email" type="email" autocomplete="email" required />
           </label>
           <label>
-            <span data-lang="mr">Password / PIN</span><span data-lang="en">Password / PIN</span>
-            <input name="password" type="password" autocomplete="current-password" />
+            <span data-lang="mr">Password</span><span data-lang="en">Password</span>
+            <input name="password" type="password" autocomplete="current-password" required />
           </label>
-          <label class="wide">
+          <label class="wide" data-signup-only>
             <span data-lang="mr">पूर्ण पत्ता</span><span data-lang="en">Full address</span>
-            <textarea name="address" required rows="3"></textarea>
+            <textarea name="address" rows="3"></textarea>
           </label>
-          <label>
+          <label data-signup-only>
             <span data-lang="mr">शहर</span><span data-lang="en">City</span>
-            <input name="city" required autocomplete="address-level2" />
+            <input name="city" autocomplete="address-level2" />
           </label>
-          <label>
+          <label data-signup-only>
             <span>PIN code</span>
-            <input name="pincode" required maxlength="6" inputmode="numeric" autocomplete="postal-code" />
+            <input name="pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" />
           </label>
           <div class="account-actions wide">
-            <button class="button primary" type="submit"><span data-lang="mr">Save आणि Login</span><span data-lang="en">Save and Login</span></button>
-            <button class="button secondary" type="button" data-account-logout><span data-lang="mr">Logout</span><span data-lang="en">Logout</span></button>
+            <button class="button primary" type="submit" data-account-submit>Continue</button>
+            <button class="button secondary" type="button" data-account-logout>Logout</button>
           </div>
         </form>
+        <section class="customer-dashboard" data-dashboard hidden>
+          <h3 data-dashboard-welcome>Welcome back</h3>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h4>Order History</h4>
+              <div data-order-history></div>
+            </div>
+            <div class="dashboard-card">
+              <h4>Wishlist</h4>
+              <div data-dashboard-wishlist></div>
+            </div>
+            <div class="dashboard-card">
+              <h4>Address Book</h4>
+              <div data-address-book></div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 
