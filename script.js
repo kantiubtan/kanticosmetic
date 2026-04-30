@@ -136,6 +136,7 @@ const state = {
   user: null,
   users: JSON.parse(localStorage.getItem("kantiUsersDb") || "[]"),
   ordersByUser: JSON.parse(localStorage.getItem("kantiOrdersDb") || "{}"),
+  accountMode: "signup",
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -173,6 +174,8 @@ const els = {
   orderHistory: $("[data-order-history]"),
   dashboardWishlist: $("[data-dashboard-wishlist]"),
   addressBook: $("[data-address-book]"),
+  accountModeInput: $("[name=mode]"),
+  accountSubmit: $("[data-account-submit]"),
   countdown: $("[data-countdown]"),
 };
 
@@ -189,6 +192,7 @@ function init() {
   updateLanguageButtons();
   updateAccountUi();
   bindEvents();
+  setAccountMode("signup");
   renderProducts();
   renderCart();
   renderWishlist();
@@ -246,11 +250,12 @@ function bindEvents() {
   $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
   $$("[data-location-open]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, true)));
   $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
-  $$("[data-account-open]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, true)));
+  $$("[data-account-open]").forEach((button) => button.addEventListener("click", openAccountPortal));
   $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
   els.accountForm?.addEventListener("submit", saveAccount);
   $("[data-account-logout]")?.addEventListener("click", logoutAccount);
+  $$("[data-account-tab]").forEach((button) => button.addEventListener("click", () => setAccountMode(button.dataset.accountTab)));
   document.addEventListener("click", handleDocumentClick);
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -261,6 +266,19 @@ function bindEvents() {
       setModal(els.accountModal, false);
     }
   });
+}
+
+function setAccountMode(mode) {
+  state.accountMode = mode;
+  if (els.accountModeInput) els.accountModeInput.value = mode;
+  $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
+  $$("[data-signup-only]").forEach((field) => field.hidden = mode !== "signup");
+  const signupFields = ["name", "phone", "address", "city", "pincode"];
+  signupFields.forEach((fieldName) => {
+    const field = els.accountForm?.elements[fieldName];
+    if (field) field.required = mode === "signup";
+  });
+  if (els.accountSubmit) els.accountSubmit.textContent = mode === "signup" ? "Create Account" : "Login";
 }
 
 function setLanguage(lang) {
@@ -357,35 +375,54 @@ function handleDocumentClick(event) {
   }
 }
 
+function openAccountPortal() {
+  setAccountMode(state.user ? "login" : "signup");
+  populateAccountForm();
+  renderDashboard();
+  setModal(els.accountModal, true);
+}
+
 function saveAccount(event) {
   event.preventDefault();
   const data = new FormData(els.accountForm);
-  const account = {
-    name: String(data.get("name") || "").trim(),
-    phone: String(data.get("phone") || "").trim(),
-    email: String(data.get("email") || "").trim().toLowerCase(),
-    password: String(data.get("password") || "").trim(),
-    address: String(data.get("address") || "").trim(),
-    city: String(data.get("city") || "").trim(),
-    pincode: String(data.get("pincode") || "").trim(),
-    wishlist: state.wishlist || [],
-  };
-  if (!account.email) return showToast("Email is required for login.");
-  const idx = state.users.findIndex((u) => u.email === account.email);
-  if (idx >= 0 && state.users[idx].password && state.users[idx].password !== account.password) return showToast("Wrong password for this email.");
-  if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
-  else state.users.push(account);
-  state.user = idx >= 0 ? state.users[idx] : account;
+  const mode = String(data.get("mode") || state.accountMode);
+  const email = String(data.get("email") || "").trim().toLowerCase();
+  const password = String(data.get("password") || "").trim();
+  if (!email || !password) return showToast("Email and password are required.");
+  const idx = state.users.findIndex((u) => u.email === email);
+
+  if (mode === "login") {
+    if (idx < 0) return showToast("Account not found. Please sign up first.");
+    if (state.users[idx].password !== password) return showToast("Incorrect password.");
+    state.user = state.users[idx];
+  } else {
+    const account = {
+      name: String(data.get("name") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      email,
+      password,
+      address: String(data.get("address") || "").trim(),
+      city: String(data.get("city") || "").trim(),
+      pincode: String(data.get("pincode") || "").trim(),
+      wishlist: idx >= 0 ? state.users[idx].wishlist || [] : [],
+    };
+    if (!account.name || !account.phone || !account.address || !account.city || !account.pincode) return showToast("Please complete full profile details.");
+    if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Email already exists with different password.");
+    if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
+    else state.users.push(account);
+    state.user = idx >= 0 ? state.users[idx] : account;
+  }
   state.wishlist = state.user.wishlist || [];
   localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
   localStorage.setItem("kantiActiveUser", state.user.email);
-  state.pincode = state.user.pincode;
+  state.pincode = state.user.pincode || state.pincode;
   localStorage.setItem("kantiPincode", state.pincode);
+  populateAccountForm();
   updateAccountUi();
   renderWishlist();
   renderDashboard();
   setModal(els.accountModal, false);
-  showToast(state.lang === "mr" ? "Account login झाले." : "Account logged in.");
+  showToast(mode === "signup" ? "Account created successfully." : "Welcome back.");
 }
 
 function logoutAccount() {
@@ -393,7 +430,10 @@ function logoutAccount() {
   state.wishlist = [];
   localStorage.removeItem("kantiActiveUser");
   els.accountForm?.reset();
+  setAccountMode("login");
   updateAccountUi();
+  renderWishlist();
+  renderDashboard();
   showToast(state.lang === "mr" ? "Logout झाले." : "Logged out.");
 }
 
@@ -614,7 +654,9 @@ function setModal(modal, isOpen) {
   if (!modal) return;
   modal.classList.toggle("is-open", isOpen);
   modal.setAttribute("aria-hidden", String(!isOpen));
-  document.body.classList.toggle("menu-open", isOpen);
+  const anyOpen = [els.offerModal, els.quickModal, els.locationModal, els.accountModal, els.cartDrawer, els.wishlistDrawer]
+    .some((item) => item?.classList.contains("is-open"));
+  document.body.classList.toggle("menu-open", anyOpen);
 }
 
 function startCountdown() {
