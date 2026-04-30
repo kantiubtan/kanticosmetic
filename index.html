@@ -19,11 +19,6 @@
         <span>Sree Kanti</span>
       </a>
 
-      <button class="location-pill" type="button" data-location-open>
-        <span data-lang="mr">डिलिव्हरी तपासा</span>
-        <span data-lang="en">Check Delivery</span>
-      </button>
-
       <form class="search-box" role="search" data-search-form>
         <select data-category-select aria-label="Category">
           <option value="all">All</option>
@@ -259,16 +254,16 @@
         <h2><span data-lang="mr">Customer Login व Dashboard</span><span data-lang="en">Customer Login & Dashboard</span></h2>
         <p><span data-lang="mr">ही माहिती या browser मध्ये save होईल आणि checkout message मध्ये address जोडला जाईल.</span><span data-lang="en">This information is saved in this browser and added to the checkout message.</span></p>
         <div class="account-tabs">
-          <button type="button" class="active" data-account-tab="signup">Sign Up</button>
-          <button type="button" data-account-tab="login">Login</button>
-          <button type="button" data-account-tab="dashboard">My Account</button>
+          <button type="button" class="active" data-account-tab="register">Registration Form</button>
+          <button type="button" data-account-tab="login">Login Form</button>
+          <button type="button" data-account-tab="account">Customer Account</button>
         </div>
-        <form class="account-form" data-account-form-signup data-account-panel="signup">
-          <label data-signup-only>
+        <form class="account-form" data-register-form data-account-panel="register">
+          <label>
             <span data-lang="mr">नाव</span><span data-lang="en">Full name</span>
             <input name="name" autocomplete="name" required />
           </label>
-          <label data-signup-only>
+          <label>
             <span data-lang="mr">मोबाइल नंबर</span><span data-lang="en">Mobile number</span>
             <input name="phone" inputmode="tel" autocomplete="tel" required />
           </label>
@@ -276,7 +271,7 @@
             <span data-lang="mr">User Login Name</span><span data-lang="en">User Login Name</span>
             <input name="username" autocomplete="username" required />
           </label>
-          <label data-signup-only>
+          <label>
             <span>Email</span>
             <input name="email" type="email" autocomplete="email" required />
           </label>
@@ -284,23 +279,23 @@
             <span data-lang="mr">Password</span><span data-lang="en">Password</span>
             <input name="password" type="password" autocomplete="new-password" required />
           </label>
-          <label class="wide" data-signup-only>
+          <label class="wide">
             <span data-lang="mr">पूर्ण पत्ता</span><span data-lang="en">Full address</span>
             <textarea name="address" rows="3" required></textarea>
           </label>
-          <label data-signup-only>
+          <label>
             <span data-lang="mr">शहर</span><span data-lang="en">City</span>
             <input name="city" autocomplete="address-level2" required />
           </label>
-          <label data-signup-only>
+          <label>
             <span>PIN code</span>
             <input name="pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" required />
           </label>
           <div class="account-actions wide">
-            <button class="button primary" type="submit">Create Account</button>
+            <button class="button primary" type="submit">Register & Save</button>
           </div>
         </form>
-        <form class="account-form" data-account-form-login data-account-panel="login" hidden>
+        <form class="account-form" data-login-form data-account-panel="login" hidden>
           <label>
             <span data-lang="mr">User Login Name</span><span data-lang="en">User Login Name</span>
             <input name="username" autocomplete="username" required />
@@ -313,7 +308,7 @@
             <button class="button primary" type="submit">Login</button>
           </div>
         </form>
-        <section class="customer-dashboard" data-dashboard data-account-panel="dashboard" hidden>
+        <section class="customer-dashboard" data-dashboard data-account-panel="account" hidden>
           <h3 data-dashboard-welcome>Welcome back</h3>
           <div class="dashboard-grid">
             <div class="dashboard-card">
