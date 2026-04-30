@@ -67,6 +67,15 @@
       <a href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer">@kantiubtan</a>
     </nav>
 
+    <section class="account-promo" aria-label="Customer account access">
+      <div>
+        <p class="eyebrow">Customer Account Portal</p>
+        <h2><span data-lang="mr">नवीन ग्राहक? Sign up करा आणि order history save करा</span><span data-lang="en">New customer? Sign up to save your orders and details</span></h2>
+        <p><span data-lang="mr">एकदा नोंदणी केल्यावर पुढच्या वेळी फक्त login करा आणि wishlist, address book, order history ताबडतोब मिळवा.</span><span data-lang="en">Register once, then log in anytime to continue with your wishlist, address book and order history.</span></p>
+      </div>
+      <button class="button primary" type="button" data-account-open>Login / Sign up</button>
+    </section>
+
     <main id="home">
       <section class="hero-store">
         <div class="hero-copy">
@@ -105,15 +114,6 @@
         <div><strong>Secure Enquiry</strong><span data-lang="mr">Direct phone, email आणि Instagram</span><span data-lang="en">Direct phone, email and Instagram</span></div>
         <div><strong>Gift Ready</strong><span data-lang="mr">Bulk आणि custom hampers साठी योग्य</span><span data-lang="en">Ideal for bulk and custom hampers</span></div>
         <div><strong>Intro Price</strong><span data-lang="mr">सर्व products ₹1 दाखवले आहेत</span><span data-lang="en">All products shown at ₹1</span></div>
-      </section>
-
-      <section class="account-promo" aria-label="Customer account access">
-        <div>
-          <p class="eyebrow">Customer Account Portal</p>
-          <h2><span data-lang="mr">नवीन ग्राहक? Sign up करा आणि order history save करा</span><span data-lang="en">New customer? Sign up to save your orders and details</span></h2>
-          <p><span data-lang="mr">एकदा नोंदणी केल्यावर पुढच्या वेळी फक्त login करा आणि wishlist, address book, order history ताबडतोब मिळवा.</span><span data-lang="en">Register once, then log in anytime to continue with your wishlist, address book and order history.</span></p>
-        </div>
-        <button class="button primary" type="button" data-account-open>Login / Sign up</button>
       </section>
 
       <section class="shopping-layout" id="products">
@@ -264,15 +264,19 @@
         </div>
         <form class="account-form" data-account-form>
           <input type="hidden" name="mode" value="signup" />
-          <label>
+          <label data-signup-only>
             <span data-lang="mr">नाव</span><span data-lang="en">Full name</span>
             <input name="name" autocomplete="name" />
           </label>
-          <label>
+          <label data-signup-only>
             <span data-lang="mr">मोबाइल नंबर</span><span data-lang="en">Mobile number</span>
             <input name="phone" inputmode="tel" autocomplete="tel" />
           </label>
           <label>
+            <span data-lang="mr">User Login Name</span><span data-lang="en">User Login Name</span>
+            <input name="username" autocomplete="username" required />
+          </label>
+          <label data-signup-only>
             <span>Email</span>
             <input name="email" type="email" autocomplete="email" required />
           </label>
