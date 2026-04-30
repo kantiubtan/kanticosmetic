@@ -176,6 +176,7 @@ const els = {
   dashboardWishlist: $("[data-dashboard-wishlist]"),
   addressBook: $("[data-address-book]"),
   countdown: $("[data-countdown]"),
+  accountStateTitle: $("[data-account-state-title]"),
 };
 
 let toastTimer;
@@ -279,10 +280,17 @@ function bindEvents() {
 }
 
 function setAccountMode(mode) {
-  if (mode === "account" && !state.user) mode = "login";
+  if (mode === "account" && !state.user) {
+    mode = "login";
+    showToast("Please login first to open Customer Account.");
+  }
   state.accountMode = mode;
-  const accountTab = document.querySelector('[data-account-tab="account"]');
-  if (accountTab) accountTab.disabled = !state.user;
+  const modeTitle = {
+    register: "Registration Form",
+    login: "Login Form",
+    account: "Customer Account",
+  };
+  if (els.accountStateTitle) els.accountStateTitle.textContent = modeTitle[mode] || "Registration Form";
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
   $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
 }
@@ -388,7 +396,7 @@ function openAccountPortal() {
   setModal(els.accountModal, true);
 }
 
-async function saveAccount(event, mode) {
+function saveAccount(event, mode) {
   event.preventDefault();
   const form = mode === "register" ? els.registerForm : els.loginForm;
   const data = new FormData(form);
@@ -419,7 +427,7 @@ async function saveAccount(event, mode) {
     if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Username already exists with different password.");
     if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
     else state.users.push(account);
-    await saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
+    saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
     state.user = idx >= 0 ? state.users[idx] : account;
   }
   state.wishlist = state.user.wishlist || [];
@@ -459,7 +467,7 @@ function populateAccountForm() {
   });
 }
 
-async function saveCustomerToBackend(customer) {
+function saveCustomerToBackend(customer) {
   const backendDb = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
   const existing = backendDb.findIndex((entry) => entry.username === customer.username);
   if (existing >= 0) backendDb[existing] = customer;
