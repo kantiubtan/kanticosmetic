@@ -279,10 +279,10 @@ function bindEvents() {
   });
 }
 
-function setAccountMode(mode) {
+function setAccountMode(mode, notify = true) {
   if (mode === "account" && !state.user) {
     mode = "login";
-    showToast("Please login first to open Customer Account.");
+    if (notify) showToast("Please login first to open Customer Account.");
   }
   state.accountMode = mode;
   const modeTitle = {
@@ -390,7 +390,7 @@ function handleDocumentClick(event) {
 }
 
 function openAccountPortal() {
-  setAccountMode(state.user ? "account" : "register");
+  setAccountMode(state.user ? "account" : "register", false);
   populateAccountForm();
   renderDashboard();
   setModal(els.accountModal, true);
@@ -439,7 +439,7 @@ function saveAccount(event, mode) {
   updateAccountUi();
   renderWishlist();
   renderDashboard();
-  setAccountMode("account");
+  setAccountMode("account", false);
   showToast(mode === "register" ? "Registration saved successfully." : "Welcome back.");
 }
 
@@ -449,7 +449,7 @@ function logoutAccount() {
   localStorage.removeItem("kantiActiveUser");
   els.registerForm?.reset();
   els.loginForm?.reset();
-  setAccountMode("login");
+  setAccountMode("login", false);
   updateAccountUi();
   renderWishlist();
   renderDashboard();
