@@ -171,10 +171,10 @@ const els = {
   recentGrid: $("[data-recent-grid]"),
   toast: $("[data-toast]"),
   dashboard: $("[data-dashboard]"),
+  accountForm: $("[data-account-form]"),
   dashboardWelcome: $("[data-dashboard-welcome]"),
   orderHistory: $("[data-order-history]"),
   dashboardWishlist: $("[data-dashboard-wishlist]"),
-  addressBook: $("[data-address-book]"),
   countdown: $("[data-countdown]"),
   accountStateTitle: $("[data-account-state-title]"),
 };
@@ -279,10 +279,10 @@ function bindEvents() {
   });
 }
 
-function setAccountMode(mode) {
+function setAccountMode(mode, notify = true) {
   if (mode === "account" && !state.user) {
     mode = "login";
-    showToast("Please login first to open Customer Account.");
+    if (notify) showToast("Please login first to open Customer Account.");
   }
   state.accountMode = mode;
   const modeTitle = {
@@ -390,7 +390,7 @@ function handleDocumentClick(event) {
 }
 
 function openAccountPortal() {
-  setAccountMode(state.user ? "account" : "register");
+  setAccountMode(state.user ? "account" : "register", false);
   populateAccountForm();
   renderDashboard();
   setModal(els.accountModal, true);
@@ -439,7 +439,7 @@ function saveAccount(event, mode) {
   updateAccountUi();
   renderWishlist();
   renderDashboard();
-  setAccountMode("account");
+  setAccountMode("account", false);
   showToast(mode === "register" ? "Registration saved successfully." : "Welcome back.");
 }
 
@@ -449,7 +449,7 @@ function logoutAccount() {
   localStorage.removeItem("kantiActiveUser");
   els.registerForm?.reset();
   els.loginForm?.reset();
-  setAccountMode("login");
+  setAccountMode("login", false);
   updateAccountUi();
   renderWishlist();
   renderDashboard();
@@ -654,7 +654,12 @@ function renderDashboard() {
   els.orderHistory.innerHTML = orders.length ? orders.slice(0, 6).map((order) => `<div class="dashboard-item"><span>${new Date(order.createdAt).toLocaleDateString()} • ₹${order.total}</span><span><button type="button" onclick="addToCart('ubtan')">Re-order Ubtan</button> <button type="button" onclick="addToCart('face-oil')">Re-order Face Oil</button></span></div>`).join("") : "<p>No orders yet.</p>";
   const wishSkus = ["bath-salt", "face-mask-offer"].filter((sku) => state.wishlist.includes(sku));
   els.dashboardWishlist.innerHTML = wishSkus.length ? wishSkus.map((sku) => `<div class="dashboard-item"><span>${getProduct(sku)[state.lang].name}</span><button type="button" data-add-cart="${sku}">Move to cart</button></div>`).join("") : "<p>Save Bath Salts or Face Mask for later.</p>";
-  els.addressBook.innerHTML = `<div class="address-chip"><strong>Shipping/Billing</strong><br>${state.user.address}, ${state.user.city} - ${state.user.pincode}<br>Phone: ${state.user.phone}</div><p>Mobile-Friendly checkout enabled.</p>`;
+  if (els.accountForm) {
+    els.accountForm.elements.accountAddress.value = state.user.address || "";
+    els.accountForm.elements.accountCity.value = state.user.city || "";
+    els.accountForm.elements.accountPincode.value = state.user.pincode || "";
+    els.accountForm.elements.accountPhone.value = state.user.phone || "";
+  }
 }
 
 function savePincode() {

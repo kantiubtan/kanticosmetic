@@ -309,7 +309,7 @@
             <button class="button primary" type="submit">Login</button>
           </div>
         </form>
-        <section class="customer-dashboard" data-dashboard data-account-panel="account" hidden>
+        <form class="customer-dashboard" data-account-form data-dashboard data-account-panel="account" hidden>
           <h3 data-dashboard-welcome>Welcome back</h3>
           <div class="dashboard-grid">
             <div class="dashboard-card">
@@ -322,13 +322,28 @@
             </div>
             <div class="dashboard-card">
               <h4>Address Book</h4>
-              <div data-address-book></div>
+              <label>
+                <span>Address</span>
+                <textarea name="accountAddress" rows="3" readonly></textarea>
+              </label>
+              <label>
+                <span>City</span>
+                <input name="accountCity" readonly />
+              </label>
+              <label>
+                <span>PIN code</span>
+                <input name="accountPincode" readonly />
+              </label>
+              <label>
+                <span>Phone</span>
+                <input name="accountPhone" readonly />
+              </label>
             </div>
           </div>
           <div class="account-actions">
             <button class="button secondary" type="button" data-account-logout>Logout</button>
           </div>
-        </section>
+        </form>
       </div>
     </div>
 
