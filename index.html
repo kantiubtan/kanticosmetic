@@ -247,7 +247,7 @@
       <div class="account-card">
         <button class="round-close" type="button" data-account-close aria-label="Close account">×</button>
         <p class="eyebrow">Account</p>
-        <h2><span data-lang="mr">Login आणि Delivery Address</span><span data-lang="en">Login and Delivery Address</span></h2>
+        <h2><span data-lang="mr">Customer Login व Dashboard</span><span data-lang="en">Customer Login & Dashboard</span></h2>
         <p><span data-lang="mr">ही माहिती या browser मध्ये save होईल आणि checkout message मध्ये address जोडला जाईल.</span><span data-lang="en">This information is saved in this browser and added to the checkout message.</span></p>
         <form class="account-form" data-account-form>
           <label>
@@ -283,6 +283,23 @@
             <button class="button secondary" type="button" data-account-logout><span data-lang="mr">Logout</span><span data-lang="en">Logout</span></button>
           </div>
         </form>
+        <section class="customer-dashboard" data-dashboard hidden>
+          <h3 data-dashboard-welcome>Welcome back</h3>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h4>Order History</h4>
+              <div data-order-history></div>
+            </div>
+            <div class="dashboard-card">
+              <h4>Wishlist</h4>
+              <div data-dashboard-wishlist></div>
+            </div>
+            <div class="dashboard-card">
+              <h4>Address Book</h4>
+              <div data-address-book></div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 

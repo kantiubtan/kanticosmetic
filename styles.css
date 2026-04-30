@@ -431,3 +431,11 @@ p { color: var(--muted); }
   .cart-qty { grid-column: 2; }
   .account-form { grid-template-columns: 1fr; }
 }
+
+.customer-dashboard { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
+.dashboard-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
+.dashboard-card { padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.dashboard-card h4 { margin: 0 0 8px; color: var(--teal); }
+.dashboard-item { display:flex; justify-content:space-between; gap:8px; margin:6px 0; font-size:.92rem; }
+.dashboard-item button { border:1px solid var(--line); background:var(--cream); border-radius:6px; padding:4px 8px; font-weight:700; cursor:pointer; }
+.address-chip { padding:8px; margin:6px 0; border:1px solid var(--line); border-radius:6px; background:var(--paper); }
