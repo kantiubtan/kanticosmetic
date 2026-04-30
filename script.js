@@ -269,6 +269,7 @@ function bindEvents() {
 }
 
 function setAccountMode(mode) {
+  if (mode === "dashboard" && !state.user) mode = "login";
   state.accountMode = mode;
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
   $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
@@ -417,8 +418,8 @@ function saveAccount(event, mode) {
   updateAccountUi();
   renderWishlist();
   renderDashboard();
-  setModal(els.accountModal, false);
-  showToast(mode === "signup" ? "Account created successfully." : "Welcome back.");
+  setAccountMode("dashboard");
+  showToast(mode === "signup" ? "Account created successfully. Welcome!" : "Welcome back.");
 }
 
 function logoutAccount() {
@@ -617,7 +618,7 @@ function renderRecent() {
 function renderDashboard() {
   if (!els.dashboard) return;
   const loggedIn = Boolean(state.user?.email);
-  els.dashboard.hidden = !loggedIn;
+  if (state.accountMode === "dashboard") els.dashboard.hidden = !loggedIn;
   if (!loggedIn) return;
   els.dashboardWelcome.textContent = `Welcome back, ${state.user.name || "Customer"}`;
   const orders = state.ordersByUser[state.user.email] || [];
