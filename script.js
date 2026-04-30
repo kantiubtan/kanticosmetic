@@ -250,7 +250,7 @@ function bindEvents() {
   $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
   $$("[data-location-open]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, true)));
   $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
-  $$("[data-account-open]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, true)));
+  $$("[data-account-open]").forEach((button) => button.addEventListener("click", openAccountPortal));
   $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
   els.accountForm?.addEventListener("submit", saveAccount);
@@ -273,6 +273,11 @@ function setAccountMode(mode) {
   if (els.accountModeInput) els.accountModeInput.value = mode;
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
   $$("[data-signup-only]").forEach((field) => field.hidden = mode !== "signup");
+  const signupFields = ["name", "phone", "address", "city", "pincode"];
+  signupFields.forEach((fieldName) => {
+    const field = els.accountForm?.elements[fieldName];
+    if (field) field.required = mode === "signup";
+  });
   if (els.accountSubmit) els.accountSubmit.textContent = mode === "signup" ? "Create Account" : "Login";
 }
 
@@ -370,6 +375,13 @@ function handleDocumentClick(event) {
   }
 }
 
+function openAccountPortal() {
+  setAccountMode(state.user ? "login" : "signup");
+  populateAccountForm();
+  renderDashboard();
+  setModal(els.accountModal, true);
+}
+
 function saveAccount(event) {
   event.preventDefault();
   const data = new FormData(els.accountForm);
@@ -418,7 +430,10 @@ function logoutAccount() {
   state.wishlist = [];
   localStorage.removeItem("kantiActiveUser");
   els.accountForm?.reset();
+  setAccountMode("login");
   updateAccountUi();
+  renderWishlist();
+  renderDashboard();
   showToast(state.lang === "mr" ? "Logout झाले." : "Logged out.");
 }
 
@@ -639,7 +654,9 @@ function setModal(modal, isOpen) {
   if (!modal) return;
   modal.classList.toggle("is-open", isOpen);
   modal.setAttribute("aria-hidden", String(!isOpen));
-  document.body.classList.toggle("menu-open", isOpen);
+  const anyOpen = [els.offerModal, els.quickModal, els.locationModal, els.accountModal, els.cartDrawer, els.wishlistDrawer]
+    .some((item) => item?.classList.contains("is-open"));
+  document.body.classList.toggle("menu-open", anyOpen);
 }
 
 function startCountdown() {
