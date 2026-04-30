@@ -202,8 +202,8 @@ function init() {
 }
 
 function hydrateSession() {
-  const activeEmail = localStorage.getItem("kantiActiveUser");
-  state.user = state.users.find((u) => u.email === activeEmail) || null;
+  const activeUsername = localStorage.getItem("kantiActiveUser");
+  state.user = state.users.find((u) => u.username === activeUsername || u.email === activeUsername) || null;
   state.wishlist = state.user?.wishlist || [];
 }
 
@@ -273,11 +273,15 @@ function setAccountMode(mode) {
   if (els.accountModeInput) els.accountModeInput.value = mode;
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
   $$("[data-signup-only]").forEach((field) => field.hidden = mode !== "signup");
-  const signupFields = ["name", "phone", "address", "city", "pincode"];
+  const signupFields = ["name", "phone", "email", "address", "city", "pincode"];
   signupFields.forEach((fieldName) => {
     const field = els.accountForm?.elements[fieldName];
     if (field) field.required = mode === "signup";
   });
+  const usernameField = els.accountForm?.elements.username;
+  if (usernameField) usernameField.required = true;
+  const passwordField = els.accountForm?.elements.password;
+  if (passwordField) passwordField.required = true;
   if (els.accountSubmit) els.accountSubmit.textContent = mode === "signup" ? "Create Account" : "Login";
 }
 
@@ -386,10 +390,11 @@ function saveAccount(event) {
   event.preventDefault();
   const data = new FormData(els.accountForm);
   const mode = String(data.get("mode") || state.accountMode);
+  const username = String(data.get("username") || "").trim().toLowerCase();
   const email = String(data.get("email") || "").trim().toLowerCase();
   const password = String(data.get("password") || "").trim();
-  if (!email || !password) return showToast("Email and password are required.");
-  const idx = state.users.findIndex((u) => u.email === email);
+  if (!username || !password) return showToast("Username and password are required.");
+  const idx = state.users.findIndex((u) => u.username === username);
 
   if (mode === "login") {
     if (idx < 0) return showToast("Account not found. Please sign up first.");
@@ -397,6 +402,7 @@ function saveAccount(event) {
     state.user = state.users[idx];
   } else {
     const account = {
+      username,
       name: String(data.get("name") || "").trim(),
       phone: String(data.get("phone") || "").trim(),
       email,
@@ -406,15 +412,16 @@ function saveAccount(event) {
       pincode: String(data.get("pincode") || "").trim(),
       wishlist: idx >= 0 ? state.users[idx].wishlist || [] : [],
     };
+    if (!account.email) return showToast("Email is required for registration.");
     if (!account.name || !account.phone || !account.address || !account.city || !account.pincode) return showToast("Please complete full profile details.");
-    if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Email already exists with different password.");
+    if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Username already exists with different password.");
     if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
     else state.users.push(account);
     state.user = idx >= 0 ? state.users[idx] : account;
   }
   state.wishlist = state.user.wishlist || [];
   localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
-  localStorage.setItem("kantiActiveUser", state.user.email);
+  localStorage.setItem("kantiActiveUser", state.user.username || state.user.email);
   state.pincode = state.user.pincode || state.pincode;
   localStorage.setItem("kantiPincode", state.pincode);
   populateAccountForm();
