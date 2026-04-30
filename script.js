@@ -201,6 +201,17 @@ function init() {
 }
 
 function hydrateSession() {
+  const backendUsers = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
+  if (backendUsers.length) {
+    const merged = [...state.users];
+    backendUsers.forEach((backendUser) => {
+      const idx = merged.findIndex((user) => user.username === backendUser.username);
+      if (idx >= 0) merged[idx] = { ...merged[idx], ...backendUser };
+      else merged.push(backendUser);
+    });
+    state.users = merged;
+    localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
+  }
   const activeUsername = localStorage.getItem("kantiActiveUser");
   state.user = state.users.find((u) => u.username === activeUsername || u.email === activeUsername) || null;
   state.wishlist = state.user?.wishlist || [];
@@ -270,6 +281,8 @@ function bindEvents() {
 function setAccountMode(mode) {
   if (mode === "account" && !state.user) mode = "login";
   state.accountMode = mode;
+  const accountTab = document.querySelector('[data-account-tab="account"]');
+  if (accountTab) accountTab.disabled = !state.user;
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
   $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
 }
@@ -626,7 +639,7 @@ function renderRecent() {
 function renderDashboard() {
   if (!els.dashboard) return;
   const loggedIn = Boolean(state.user?.email);
-  if (state.accountMode === "account") els.dashboard.hidden = !loggedIn;
+  els.dashboard.hidden = state.accountMode !== "account" || !loggedIn;
   if (!loggedIn) return;
   els.dashboardWelcome.textContent = `Welcome back, ${state.user.name || "Customer"}`;
   const orders = state.ordersByUser[state.user.email] || [];
