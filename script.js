@@ -163,7 +163,8 @@ const els = {
   offerModal: $("[data-offer-modal]"),
   locationModal: $("[data-location-modal]"),
   accountModal: $("[data-account-modal]"),
-  accountForm: $("[data-account-form]"),
+  signupForm: $("[data-account-form-signup]"),
+  loginForm: $("[data-account-form-login]"),
   accountLabel: $("[data-account-label]"),
   pincode: $("[data-pincode]"),
   recentSection: $("[data-recent-section]"),
@@ -174,8 +175,6 @@ const els = {
   orderHistory: $("[data-order-history]"),
   dashboardWishlist: $("[data-dashboard-wishlist]"),
   addressBook: $("[data-address-book]"),
-  accountModeInput: $("[name=mode]"),
-  accountSubmit: $("[data-account-submit]"),
   countdown: $("[data-countdown]"),
 };
 
@@ -253,7 +252,8 @@ function bindEvents() {
   $$("[data-account-open]").forEach((button) => button.addEventListener("click", openAccountPortal));
   $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
-  els.accountForm?.addEventListener("submit", saveAccount);
+  els.signupForm?.addEventListener("submit", (event) => saveAccount(event, "signup"));
+  els.loginForm?.addEventListener("submit", (event) => saveAccount(event, "login"));
   $("[data-account-logout]")?.addEventListener("click", logoutAccount);
   $$("[data-account-tab]").forEach((button) => button.addEventListener("click", () => setAccountMode(button.dataset.accountTab)));
   document.addEventListener("click", handleDocumentClick);
@@ -269,20 +269,10 @@ function bindEvents() {
 }
 
 function setAccountMode(mode) {
+  if (mode === "dashboard" && !state.user) mode = "login";
   state.accountMode = mode;
-  if (els.accountModeInput) els.accountModeInput.value = mode;
   $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
-  $$("[data-signup-only]").forEach((field) => field.hidden = mode !== "signup");
-  const signupFields = ["name", "phone", "email", "address", "city", "pincode"];
-  signupFields.forEach((fieldName) => {
-    const field = els.accountForm?.elements[fieldName];
-    if (field) field.required = mode === "signup";
-  });
-  const usernameField = els.accountForm?.elements.username;
-  if (usernameField) usernameField.required = true;
-  const passwordField = els.accountForm?.elements.password;
-  if (passwordField) passwordField.required = true;
-  if (els.accountSubmit) els.accountSubmit.textContent = mode === "signup" ? "Create Account" : "Login";
+  $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
 }
 
 function setLanguage(lang) {
@@ -380,16 +370,16 @@ function handleDocumentClick(event) {
 }
 
 function openAccountPortal() {
-  setAccountMode(state.user ? "login" : "signup");
+  setAccountMode(state.user ? "dashboard" : "signup");
   populateAccountForm();
   renderDashboard();
   setModal(els.accountModal, true);
 }
 
-function saveAccount(event) {
+function saveAccount(event, mode) {
   event.preventDefault();
-  const data = new FormData(els.accountForm);
-  const mode = String(data.get("mode") || state.accountMode);
+  const form = mode === "signup" ? els.signupForm : els.loginForm;
+  const data = new FormData(form);
   const username = String(data.get("username") || "").trim().toLowerCase();
   const email = String(data.get("email") || "").trim().toLowerCase();
   const password = String(data.get("password") || "").trim();
@@ -428,15 +418,16 @@ function saveAccount(event) {
   updateAccountUi();
   renderWishlist();
   renderDashboard();
-  setModal(els.accountModal, false);
-  showToast(mode === "signup" ? "Account created successfully." : "Welcome back.");
+  setAccountMode("dashboard");
+  showToast(mode === "signup" ? "Account created successfully. Welcome!" : "Welcome back.");
 }
 
 function logoutAccount() {
   state.user = null;
   state.wishlist = [];
   localStorage.removeItem("kantiActiveUser");
-  els.accountForm?.reset();
+  els.signupForm?.reset();
+  els.loginForm?.reset();
   setAccountMode("login");
   updateAccountUi();
   renderWishlist();
@@ -445,9 +436,12 @@ function logoutAccount() {
 }
 
 function populateAccountForm() {
-  if (!els.accountForm || !state.user) return;
+  if (!state.user) return;
   Object.entries(state.user).forEach(([key, value]) => {
-    const field = els.accountForm.elements[key];
+    const signupField = els.signupForm?.elements[key];
+    if (signupField) signupField.value = value || "";
+    const loginField = els.loginForm?.elements[key];
+    const field = loginField || signupField;
     if (field) field.value = value || "";
   });
 }
@@ -624,7 +618,7 @@ function renderRecent() {
 function renderDashboard() {
   if (!els.dashboard) return;
   const loggedIn = Boolean(state.user?.email);
-  els.dashboard.hidden = !loggedIn;
+  if (state.accountMode === "dashboard") els.dashboard.hidden = !loggedIn;
   if (!loggedIn) return;
   els.dashboardWelcome.textContent = `Welcome back, ${state.user.name || "Customer"}`;
   const orders = state.ordersByUser[state.user.email] || [];

@@ -261,16 +261,16 @@
         <div class="account-tabs">
           <button type="button" class="active" data-account-tab="signup">Sign Up</button>
           <button type="button" data-account-tab="login">Login</button>
+          <button type="button" data-account-tab="dashboard">My Account</button>
         </div>
-        <form class="account-form" data-account-form>
-          <input type="hidden" name="mode" value="signup" />
+        <form class="account-form" data-account-form-signup data-account-panel="signup">
           <label data-signup-only>
             <span data-lang="mr">नाव</span><span data-lang="en">Full name</span>
-            <input name="name" autocomplete="name" />
+            <input name="name" autocomplete="name" required />
           </label>
           <label data-signup-only>
             <span data-lang="mr">मोबाइल नंबर</span><span data-lang="en">Mobile number</span>
-            <input name="phone" inputmode="tel" autocomplete="tel" />
+            <input name="phone" inputmode="tel" autocomplete="tel" required />
           </label>
           <label>
             <span data-lang="mr">User Login Name</span><span data-lang="en">User Login Name</span>
@@ -282,26 +282,38 @@
           </label>
           <label>
             <span data-lang="mr">Password</span><span data-lang="en">Password</span>
-            <input name="password" type="password" autocomplete="current-password" required />
+            <input name="password" type="password" autocomplete="new-password" required />
           </label>
           <label class="wide" data-signup-only>
             <span data-lang="mr">पूर्ण पत्ता</span><span data-lang="en">Full address</span>
-            <textarea name="address" rows="3"></textarea>
+            <textarea name="address" rows="3" required></textarea>
           </label>
           <label data-signup-only>
             <span data-lang="mr">शहर</span><span data-lang="en">City</span>
-            <input name="city" autocomplete="address-level2" />
+            <input name="city" autocomplete="address-level2" required />
           </label>
           <label data-signup-only>
             <span>PIN code</span>
-            <input name="pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" />
+            <input name="pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" required />
           </label>
           <div class="account-actions wide">
-            <button class="button primary" type="submit" data-account-submit>Continue</button>
-            <button class="button secondary" type="button" data-account-logout>Logout</button>
+            <button class="button primary" type="submit">Create Account</button>
           </div>
         </form>
-        <section class="customer-dashboard" data-dashboard hidden>
+        <form class="account-form" data-account-form-login data-account-panel="login" hidden>
+          <label>
+            <span data-lang="mr">User Login Name</span><span data-lang="en">User Login Name</span>
+            <input name="username" autocomplete="username" required />
+          </label>
+          <label>
+            <span data-lang="mr">Password</span><span data-lang="en">Password</span>
+            <input name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <div class="account-actions wide">
+            <button class="button primary" type="submit">Login</button>
+          </div>
+        </form>
+        <section class="customer-dashboard" data-dashboard data-account-panel="dashboard" hidden>
           <h3 data-dashboard-welcome>Welcome back</h3>
           <div class="dashboard-grid">
             <div class="dashboard-card">
@@ -316,6 +328,9 @@
               <h4>Address Book</h4>
               <div data-address-book></div>
             </div>
+          </div>
+          <div class="account-actions">
+            <button class="button secondary" type="button" data-account-logout>Logout</button>
           </div>
         </section>
       </div>
