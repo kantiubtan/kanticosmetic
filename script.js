@@ -269,7 +269,6 @@ function bindEvents() {
   els.registerForm?.addEventListener("submit", (event) => saveAccount(event, "register"));
   els.loginForm?.addEventListener("submit", (event) => saveAccount(event, "login"));
   $("[data-account-logout]")?.addEventListener("click", logoutAccount);
-  $$("[data-account-tab]").forEach((button) => button.addEventListener("click", () => setAccountMode(button.dataset.accountTab)));
   document.addEventListener("click", handleDocumentClick);
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -283,6 +282,7 @@ function bindEvents() {
 }
 
 function setAccountMode(mode, notify = true) {
+  if (!["register", "login", "account"].includes(mode)) mode = "login";
   if (mode === "account" && !state.user) {
     mode = "login";
     if (notify) showToast("Please login first to open Customer Account.");
@@ -293,8 +293,7 @@ function setAccountMode(mode, notify = true) {
     login: "Login Form",
     account: "Customer Account",
   };
-  if (els.accountStateTitle) els.accountStateTitle.textContent = modeTitle[mode] || "Registration Form";
-  $$("[data-account-tab]").forEach((button) => button.classList.toggle("active", button.dataset.accountTab === mode));
+  if (els.accountStateTitle) els.accountStateTitle.textContent = modeTitle[mode] || "Sign Up Form";
   $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
 }
 
@@ -394,8 +393,7 @@ function handleDocumentClick(event) {
 
 function openAccountPortal(preferredMode = "login") {
   const safeMode = preferredMode === "register" ? "register" : "login";
-  const mode = state.user ? "account" : safeMode;
-  setAccountMode(mode, false);
+  setAccountMode(safeMode, false);
   populateAccountForm();
   renderDashboard();
   setModal(els.accountModal, true);
