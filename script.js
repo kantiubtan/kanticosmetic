@@ -202,17 +202,7 @@ function init() {
 }
 
 function hydrateSession() {
-  const backendUsers = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
-  if (backendUsers.length) {
-    const merged = [...state.users];
-    backendUsers.forEach((backendUser) => {
-      const idx = merged.findIndex((user) => user.username === backendUser.username);
-      if (idx >= 0) merged[idx] = { ...merged[idx], ...backendUser };
-      else merged.push(backendUser);
-    });
-    state.users = merged;
-    localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
-  }
+  syncUsersFromBackend();
   const activeUsername = localStorage.getItem("kantiActiveUser");
   state.user = state.users.find((u) => u.username === activeUsername || u.email === activeUsername) || null;
   state.wishlist = state.user?.wishlist || [];
@@ -407,7 +397,8 @@ function saveAccount(event, mode) {
   const email = String(data.get("email") || "").trim().toLowerCase();
   const password = String(data.get("password") || "").trim();
   if (!username || !password) return showToast("Username and password are required.");
-  const idx = state.users.findIndex((u) => u.username === username);
+  syncUsersFromBackend();
+  const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
     if (idx < 0) return showToast("Account not found. Please register first.");
@@ -476,6 +467,19 @@ function saveCustomerToBackend(customer) {
   if (existing >= 0) backendDb[existing] = customer;
   else backendDb.push(customer);
   localStorage.setItem("kantiBackendCustomers", JSON.stringify(backendDb));
+}
+
+function syncUsersFromBackend() {
+  const backendUsers = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
+  if (!backendUsers.length) return;
+  const merged = [...state.users];
+  backendUsers.forEach((backendUser) => {
+    const idx = merged.findIndex((user) => user.username === backendUser.username);
+    if (idx >= 0) merged[idx] = { ...merged[idx], ...backendUser };
+    else merged.push(backendUser);
+  });
+  state.users = merged;
+  localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
 }
 
 function updateAccountUi() {
