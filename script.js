@@ -389,7 +389,7 @@ function openAccountPortal(preferredMode = "login") {
   setModal(els.accountModal, true);
 }
 
-function saveAccount(event, mode) {
+async function saveAccount(event, mode) {
   event.preventDefault();
   const form = mode === "register" ? els.registerForm : els.loginForm;
   const data = new FormData(form);
@@ -401,7 +401,7 @@ function saveAccount(event, mode) {
   const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
-    const remoteUser = loginFromBackend(username, password);
+    const remoteUser = await loginFromBackend(username, password);
     if (remoteUser.error) return showToast(remoteUser.error);
     if (remoteUser.user) {
       const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
@@ -514,16 +514,17 @@ function syncUsersFromBackend() {
   }
 }
 
-function loginFromBackend(username, password) {
+async function loginFromBackend(username, password) {
   if (!window.location.protocol.startsWith("http")) return { user: null };
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/login", false);
-  xhr.setRequestHeader("Content-Type", "application/json");
   try {
-    xhr.send(JSON.stringify({ username, password }));
-    if (xhr.status >= 200 && xhr.status < 300) return JSON.parse(xhr.responseText);
-    const error = JSON.parse(xhr.responseText || "{}").error || "Login failed.";
-    return { error };
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (response.ok) return payload;
+    return { error: payload.error || "Login failed." };
   } catch {
     return { user: null };
   }
