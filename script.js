@@ -184,7 +184,6 @@ let toastTimer;
 init();
 
 function init() {
-  cleanupConflictArtifacts();
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
   hydrateSession();
@@ -200,17 +199,6 @@ function init() {
   renderDashboard();
   renderRecent();
   startCountdown();
-}
-
-function cleanupConflictArtifacts() {
-  const patterns = [/<<<<<<<[\s\S]*?>>>>>>>/g, /<<<<<<<.*/g, />>>>>>>.*/g, /^={7}.*$/gm];
-  document.querySelectorAll("body *").forEach((el) => {
-    if (!el.children.length && el.textContent) {
-      let text = el.textContent;
-      patterns.forEach((pattern) => { text = text.replace(pattern, ""); });
-      if (text !== el.textContent) el.textContent = text.replace(/\s{2,}/g, " ").trim();
-    }
-  });
 }
 
 function hydrateSession() {
