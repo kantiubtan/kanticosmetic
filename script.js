@@ -202,17 +202,7 @@ function init() {
 }
 
 function hydrateSession() {
-  const backendUsers = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
-  if (backendUsers.length) {
-    const merged = [...state.users];
-    backendUsers.forEach((backendUser) => {
-      const idx = merged.findIndex((user) => user.username === backendUser.username);
-      if (idx >= 0) merged[idx] = { ...merged[idx], ...backendUser };
-      else merged.push(backendUser);
-    });
-    state.users = merged;
-    localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
-  }
+  syncUsersFromBackend();
   const activeUsername = localStorage.getItem("kantiActiveUser");
   state.user = state.users.find((u) => u.username === activeUsername || u.email === activeUsername) || null;
   state.wishlist = state.user?.wishlist || [];
