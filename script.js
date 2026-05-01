@@ -282,6 +282,7 @@ function bindEvents() {
 }
 
 function setAccountMode(mode, notify = true) {
+  if (!["register", "login", "account"].includes(mode)) mode = "login";
   if (mode === "account" && !state.user) {
     mode = "login";
     if (notify) showToast("Please login first to open Customer Account.");
@@ -292,7 +293,7 @@ function setAccountMode(mode, notify = true) {
     login: "Login Form",
     account: "Customer Account",
   };
-  if (els.accountStateTitle) els.accountStateTitle.textContent = modeTitle[mode] || "Registration Form";
+  if (els.accountStateTitle) els.accountStateTitle.textContent = modeTitle[mode] || "Sign Up Form";
   $$("[data-account-panel]").forEach((panel) => { panel.hidden = panel.dataset.accountPanel !== mode; });
 }
 
