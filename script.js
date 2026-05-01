@@ -186,27 +186,19 @@ init();
 function init() {
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
-  safely(hydrateSession);
+  hydrateSession();
   if (els.pincode) els.pincode.value = state.pincode;
-  safely(populateAccountForm);
+  populateAccountForm();
   updateLanguageButtons();
-  safely(updateAccountUi);
+  updateAccountUi();
   bindEvents();
-  safely(() => setAccountMode("register"));
+  setAccountMode("register");
   renderProducts();
   renderCart();
   renderWishlist();
-  safely(renderDashboard);
+  renderDashboard();
   renderRecent();
   startCountdown();
-}
-
-function safely(fn) {
-  try {
-    fn();
-  } catch (error) {
-    console.error("Non-blocking UI error:", error);
-  }
 }
 
 function hydrateSession() {
