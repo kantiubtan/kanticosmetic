@@ -251,7 +251,12 @@ function bindEvents() {
   $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
   $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
   $$("[data-account-open]").forEach((button) => button.addEventListener("click", () => {
+<<<<<<< codex/fix-customer-login-form-requirements-8bfzi3
+    const allowedModes = ["register", "login", "account"];
+    const requestedMode = allowedModes.includes(button.dataset.accountOpen) ? button.dataset.accountOpen : "login";
+=======
     const requestedMode = button.dataset.accountOpen === "register" ? "register" : "login";
+>>>>>>> main
     openAccountPortal(requestedMode);
   }));
   $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
@@ -382,7 +387,11 @@ function handleDocumentClick(event) {
 }
 
 function openAccountPortal(preferredMode = "login") {
+<<<<<<< codex/fix-customer-login-form-requirements-8bfzi3
+  const safeMode = preferredMode === "register" || preferredMode === "account" ? preferredMode : "login";
+=======
   const safeMode = preferredMode === "register" ? "register" : "login";
+>>>>>>> main
   setAccountMode(safeMode, false);
   populateAccountForm();
   renderDashboard();
@@ -402,13 +411,20 @@ async function saveAccount(event, mode) {
 
   if (mode === "login") {
     const remoteUser = await loginFromBackend(username, password);
+<<<<<<< codex/fix-customer-login-form-requirements-8bfzi3
+=======
     if (remoteUser.error) return showToast(remoteUser.error);
+>>>>>>> main
     if (remoteUser.user) {
       const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
       if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
       else state.users.push(remoteUser.user);
       state.user = remoteUser.user;
     } else {
+<<<<<<< codex/fix-customer-login-form-requirements-8bfzi3
+      if (remoteUser.error && idx < 0) return showToast(remoteUser.error);
+=======
+>>>>>>> main
       if (idx < 0) return showToast("Account not found. Please register first.");
       if (state.users[idx].password !== password) return showToast("Incorrect password.");
       state.user = state.users[idx];
@@ -533,6 +549,8 @@ async function loginFromBackend(username, password) {
 function updateAccountUi() {
   if (!els.accountLabel) return;
   els.accountLabel.textContent = state.user?.name ? state.user.name.split(" ")[0] : "Login";
+  $$("[data-account-guest]").forEach((button) => { button.hidden = Boolean(state.user); });
+  $$("[data-account-user]").forEach((button) => { button.hidden = !state.user; });
 }
 
 function hasAddress() {
@@ -710,6 +728,12 @@ function renderDashboard() {
   const wishSkus = ["bath-salt", "face-mask-offer"].filter((sku) => state.wishlist.includes(sku));
   els.dashboardWishlist.innerHTML = wishSkus.length ? wishSkus.map((sku) => `<div class="dashboard-item"><span>${getProduct(sku)[state.lang].name}</span><button type="button" data-add-cart="${sku}">Move to cart</button></div>`).join("") : "<p>Save Bath Salts or Face Mask for later.</p>";
   if (els.accountForm) {
+<<<<<<< codex/fix-customer-login-form-requirements-8bfzi3
+    els.accountForm.elements.accountName.value = state.user.name || "";
+    els.accountForm.elements.accountUsername.value = state.user.username || "";
+    els.accountForm.elements.accountEmail.value = state.user.email || "";
+=======
+>>>>>>> main
     els.accountForm.elements.accountAddress.value = state.user.address || "";
     els.accountForm.elements.accountCity.value = state.user.city || "";
     els.accountForm.elements.accountPincode.value = state.user.pincode || "";
