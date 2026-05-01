@@ -260,7 +260,10 @@ function bindEvents() {
   $$("[data-offer-open]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, true)));
   $$("[data-offer-close]").forEach((button) => button.addEventListener("click", () => setModal(els.offerModal, false)));
   $$("[data-location-close]").forEach((button) => button.addEventListener("click", () => setModal(els.locationModal, false)));
-  $$("[data-account-open]").forEach((button) => button.addEventListener("click", openAccountPortal));
+  $$("[data-account-open]").forEach((button) => button.addEventListener("click", () => {
+    const requestedMode = button.dataset.accountOpen === "register" ? "register" : "login";
+    openAccountPortal(requestedMode);
+  }));
   $$("[data-account-close]").forEach((button) => button.addEventListener("click", () => setModal(els.accountModal, false)));
   $("[data-save-pincode]")?.addEventListener("click", savePincode);
   els.registerForm?.addEventListener("submit", (event) => saveAccount(event, "register"));
@@ -286,7 +289,7 @@ function setAccountMode(mode, notify = true) {
   }
   state.accountMode = mode;
   const modeTitle = {
-    register: "Registration Form",
+    register: "Sign Up Form",
     login: "Login Form",
     account: "Customer Account",
   };
@@ -389,8 +392,10 @@ function handleDocumentClick(event) {
   }
 }
 
-function openAccountPortal() {
-  setAccountMode(state.user ? "account" : "register", false);
+function openAccountPortal(preferredMode = "login") {
+  const safeMode = preferredMode === "register" ? "register" : "login";
+  const mode = state.user ? "account" : safeMode;
+  setAccountMode(mode, false);
   populateAccountForm();
   renderDashboard();
   setModal(els.accountModal, true);

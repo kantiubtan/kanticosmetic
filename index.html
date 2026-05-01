@@ -38,7 +38,8 @@
           <button class="active" type="button" data-lang-set="mr">मराठी</button>
           <button type="button" data-lang-set="en">EN</button>
         </div>
-        <button class="icon-action" type="button" data-account-open>
+        <button class="icon-action" type="button" data-account-open="register">Sign Up</button>
+        <button class="icon-action" type="button" data-account-open="login">
           <span data-account-label>Login</span>
         </button>
         <button class="icon-action" type="button" data-wishlist-open>
@@ -68,7 +69,10 @@
         <h2><span data-lang="mr">नवीन ग्राहक? Sign up करा आणि order history save करा</span><span data-lang="en">New customer? Sign up to save your orders and details</span></h2>
         <p><span data-lang="mr">एकदा नोंदणी केल्यावर पुढच्या वेळी फक्त login करा आणि wishlist, address book, order history ताबडतोब मिळवा.</span><span data-lang="en">Register once, then log in anytime to continue with your wishlist, address book and order history.</span></p>
       </div>
-      <button class="button primary" type="button" data-account-open>Login / Sign up</button>
+      <div class="hero-actions">
+        <button class="button primary" type="button" data-account-open="register">Sign Up</button>
+        <button class="button secondary" type="button" data-account-open="login">Login</button>
+      </div>
     </section>
 
     <main id="home">
@@ -182,7 +186,7 @@
           </ol>
         </div>
         <div class="contact-card">
-          <button class="button secondary full" type="button" data-account-open><span data-lang="mr">Login / Address जोडा</span><span data-lang="en">Login / Add Address</span></button>
+          <button class="button secondary full" type="button" data-account-open="login"><span data-lang="mr">Login / Address जोडा</span><span data-lang="en">Login / Add Address</span></button>
           <a class="contact-line" href="mailto:kantiubtan@gmail.com"><span>Email</span><strong>kantiubtan@gmail.com</strong></a>
           <a class="contact-line" href="tel:+918208427976"><span>Phone</span><strong>8208427976</strong></a>
           <a class="contact-line" href="https://www.instagram.com/kantiubtan/" target="_blank" rel="noreferrer"><span>Instagram</span><strong>@kantiubtan</strong></a>
@@ -253,11 +257,10 @@
         <p class="eyebrow">Account</p>
         <h2><span data-lang="mr">Customer Login व Dashboard</span><span data-lang="en">Customer Login & Dashboard</span></h2>
         <p><span data-lang="mr">ही माहिती या browser मध्ये save होईल आणि checkout message मध्ये address जोडला जाईल.</span><span data-lang="en">This information is saved in this browser and added to the checkout message.</span></p>
-        <p class="eyebrow" data-account-state-title>Registration Form</p>
+        <p class="eyebrow" data-account-state-title>Choose action</p>
         <div class="account-tabs">
-          <button type="button" class="active" data-account-tab="register">Registration Form</button>
-          <button type="button" data-account-tab="login">Login Form</button>
-          <button type="button" data-account-tab="account">Customer Account</button>
+          <button type="button" class="active" data-account-tab="register">Sign Up</button>
+          <button type="button" data-account-tab="login">Login</button>
         </div>
         <form class="account-form" data-register-form data-account-panel="register">
           <label>
