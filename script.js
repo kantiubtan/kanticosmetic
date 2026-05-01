@@ -389,7 +389,7 @@ function openAccountPortal(preferredMode = "login") {
   setModal(els.accountModal, true);
 }
 
-function saveAccount(event, mode) {
+async function saveAccount(event, mode) {
   event.preventDefault();
   const form = mode === "register" ? els.registerForm : els.loginForm;
   const data = new FormData(form);
@@ -401,9 +401,18 @@ function saveAccount(event, mode) {
   const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
-    if (idx < 0) return showToast("Account not found. Please register first.");
-    if (state.users[idx].password !== password) return showToast("Incorrect password.");
-    state.user = state.users[idx];
+    const remoteUser = await loginFromBackend(username, password);
+    if (remoteUser.error) return showToast(remoteUser.error);
+    if (remoteUser.user) {
+      const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
+      if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
+      else state.users.push(remoteUser.user);
+      state.user = remoteUser.user;
+    } else {
+      if (idx < 0) return showToast("Account not found. Please register first.");
+      if (state.users[idx].password !== password) return showToast("Incorrect password.");
+      state.user = state.users[idx];
+    }
   } else {
     const account = {
       username,
@@ -467,6 +476,13 @@ function saveCustomerToBackend(customer) {
   if (existing >= 0) backendDb[existing] = customer;
   else backendDb.push(customer);
   localStorage.setItem("kantiBackendCustomers", JSON.stringify(backendDb));
+  if (window.location.protocol.startsWith("http")) {
+    fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer),
+    }).catch(() => null);
+  }
 }
 
 function syncUsersFromBackend() {
@@ -480,6 +496,38 @@ function syncUsersFromBackend() {
   });
   state.users = merged;
   localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
+  if (window.location.protocol.startsWith("http")) {
+    fetch("/api/users")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (!payload?.users?.length) return;
+        const users = [...state.users];
+        payload.users.forEach((serverUser) => {
+          const idx = users.findIndex((user) => user.username === serverUser.username);
+          if (idx >= 0) users[idx] = { ...users[idx], ...serverUser };
+          else users.push(serverUser);
+        });
+        state.users = users;
+        localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
+      })
+      .catch(() => null);
+  }
+}
+
+async function loginFromBackend(username, password) {
+  if (!window.location.protocol.startsWith("http")) return { user: null };
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (response.ok) return payload;
+    return { error: payload.error || "Login failed." };
+  } catch {
+    return { user: null };
+  }
 }
 
 function updateAccountUi() {
