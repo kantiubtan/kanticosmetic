@@ -384,6 +384,7 @@ function handleDocumentClick(event) {
 
 function openAccountPortal(preferredMode = "login") {
   const safeMode = preferredMode === "register" || preferredMode === "account" ? preferredMode : "login";
+  if (safeMode === "account" && !state.user) return setAccountMode("login");
   setAccountMode(safeMode, false);
   populateAccountForm();
   renderDashboard();
@@ -398,7 +399,7 @@ async function saveAccount(event, mode) {
   const email = String(data.get("email") || "").trim().toLowerCase();
   const password = String(data.get("password") || "").trim();
   if (!username || !password) return showToast("Username and password are required.");
-  syncUsersFromBackend();
+  await syncUsersFromBackend();
   const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
