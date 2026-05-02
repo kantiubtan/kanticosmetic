@@ -186,27 +186,19 @@ init();
 function init() {
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
-  safely(hydrateSession);
+  hydrateSession();
   if (els.pincode) els.pincode.value = state.pincode;
-  safely(populateAccountForm);
+  populateAccountForm();
   updateLanguageButtons();
-  safely(updateAccountUi);
+  updateAccountUi();
   bindEvents();
-  safely(() => setAccountMode("register"));
+  setAccountMode("register");
   renderProducts();
   renderCart();
   renderWishlist();
-  safely(renderDashboard);
+  renderDashboard();
   renderRecent();
   startCountdown();
-}
-
-function safely(fn) {
-  try {
-    fn();
-  } catch (error) {
-    console.error("Non-blocking UI error:", error);
-  }
 }
 
 function hydrateSession() {
@@ -410,17 +402,19 @@ async function saveAccount(event, mode) {
   const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
-    const remoteUser = await loginFromBackend(username, password);
-    if (remoteUser.user) {
-      const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
-      if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
-      else state.users.push(remoteUser.user);
-      state.user = remoteUser.user;
-    } else {
-      if (remoteUser.error && idx < 0) return showToast(remoteUser.error);
-      if (idx < 0) return showToast("Account not found. Please register first.");
-      if (state.users[idx].password !== password) return showToast("Incorrect password.");
+    if (idx >= 0 && state.users[idx].password === password) {
       state.user = state.users[idx];
+    } else {
+      const remoteUser = await loginFromBackend(username, password);
+      if (remoteUser.user) {
+        const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
+        if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
+        else state.users.push(remoteUser.user);
+        state.user = remoteUser.user;
+      } else {
+        if (idx < 0) return showToast(remoteUser.error || "Account not found. Please register first.");
+        return showToast("Incorrect password.");
+      }
     }
   } else {
     const account = {
@@ -439,7 +433,10 @@ async function saveAccount(event, mode) {
     if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Username already exists with different password.");
     if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
     else state.users.push(account);
-    saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
+    const backendStatus = await saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
+    if (window.location.protocol.startsWith("http") && !backendStatus.ok) {
+      return showToast("Registration saved only on this device. Backend sync failed.");
+    }
     state.user = idx >= 0 ? state.users[idx] : account;
   }
   state.wishlist = state.user.wishlist || [];
@@ -479,19 +476,26 @@ function populateAccountForm() {
   });
 }
 
-function saveCustomerToBackend(customer) {
+async function saveCustomerToBackend(customer) {
   const backendDb = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
   const existing = backendDb.findIndex((entry) => entry.username === customer.username);
   if (existing >= 0) backendDb[existing] = customer;
   else backendDb.push(customer);
   localStorage.setItem("kantiBackendCustomers", JSON.stringify(backendDb));
   if (window.location.protocol.startsWith("http")) {
-    fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(customer),
-    }).catch(() => null);
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      });
+      if (!response.ok) return { ok: false };
+      return { ok: true };
+    } catch {
+      return { ok: false };
+    }
   }
+  return { ok: true };
 }
 
 function syncUsersFromBackend() {
@@ -524,7 +528,7 @@ function syncUsersFromBackend() {
 }
 
 async function loginFromBackend(username, password) {
-  if (!window.location.protocol.startsWith("http")) return { user: null };
+  if (!window.location.protocol.startsWith("http")) return { user: null, error: "Backend login unavailable in file preview mode." };
   try {
     const response = await fetch("/api/login", {
       method: "POST",
@@ -535,7 +539,7 @@ async function loginFromBackend(username, password) {
     if (response.ok) return payload;
     return { error: payload.error || "Login failed." };
   } catch {
-    return { user: null };
+    return { user: null, error: "Unable to reach backend server." };
   }
 }
 
