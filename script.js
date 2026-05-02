@@ -134,7 +134,7 @@ const state = {
   recent: JSON.parse(localStorage.getItem("kantiRecent") || "[]"),
   pincode: localStorage.getItem("kantiPincode") || "",
   user: null,
-  users: JSON.parse(localStorage.getItem("kantiUsersDb") || "[]"),
+  users: [],
   ordersByUser: JSON.parse(localStorage.getItem("kantiOrdersDb") || "{}"),
   accountMode: "register",
 };
@@ -183,10 +183,10 @@ let toastTimer;
 
 init();
 
-function init() {
+async function init() {
   document.body.dataset.activeLang = state.lang;
   document.documentElement.lang = state.lang;
-  hydrateSession();
+  await hydrateSession();
   if (els.pincode) els.pincode.value = state.pincode;
   populateAccountForm();
   updateLanguageButtons();
@@ -201,8 +201,8 @@ function init() {
   startCountdown();
 }
 
-function hydrateSession() {
-  syncUsersFromBackend();
+async function hydrateSession() {
+  await syncUsersFromBackend();
   const activeUsername = localStorage.getItem("kantiActiveUser");
   state.user = state.users.find((u) => u.username === activeUsername || u.email === activeUsername) || null;
   state.wishlist = state.user?.wishlist || [];
@@ -384,6 +384,7 @@ function handleDocumentClick(event) {
 
 function openAccountPortal(preferredMode = "login") {
   const safeMode = preferredMode === "register" || preferredMode === "account" ? preferredMode : "login";
+  if (safeMode === "account" && !state.user) return setAccountMode("login");
   setAccountMode(safeMode, false);
   populateAccountForm();
   renderDashboard();
@@ -398,24 +399,16 @@ async function saveAccount(event, mode) {
   const email = String(data.get("email") || "").trim().toLowerCase();
   const password = String(data.get("password") || "").trim();
   if (!username || !password) return showToast("Username and password are required.");
-  syncUsersFromBackend();
+  await syncUsersFromBackend();
   const idx = state.users.findIndex((u) => u.username === username || u.email === username);
 
   if (mode === "login") {
-    if (idx >= 0 && state.users[idx].password === password) {
-      state.user = state.users[idx];
-    } else {
-      const remoteUser = await loginFromBackend(username, password);
-      if (remoteUser.user) {
-        const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
-        if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
-        else state.users.push(remoteUser.user);
-        state.user = remoteUser.user;
-      } else {
-        if (idx < 0) return showToast(remoteUser.error || "Account not found. Please register first.");
-        return showToast("Incorrect password.");
-      }
-    }
+    const remoteUser = await loginFromBackend(username, password);
+    if (!remoteUser.user) return showToast(remoteUser.error || "Account not found. Please register first.");
+    const localIdx = state.users.findIndex((u) => u.username === remoteUser.user.username);
+    if (localIdx >= 0) state.users[localIdx] = remoteUser.user;
+    else state.users.push(remoteUser.user);
+    state.user = remoteUser.user;
   } else {
     const account = {
       username,
@@ -431,16 +424,14 @@ async function saveAccount(event, mode) {
     if (!account.email) return showToast("Email is required for registration.");
     if (!account.name || !account.phone || !account.address || !account.city || !account.pincode) return showToast("Please complete full profile details.");
     if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Username already exists with different password.");
-    if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
-    else state.users.push(account);
-    const backendStatus = await saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
-    if (window.location.protocol.startsWith("http") && !backendStatus.ok) {
-      return showToast("Registration saved only on this device. Backend sync failed.");
-    }
-    state.user = idx >= 0 ? state.users[idx] : account;
+    const backendStatus = await saveCustomerToBackend(account);
+    if (!backendStatus.ok) return showToast(backendStatus.error || "Registration failed on backend.");
+    const localIdx = state.users.findIndex((u) => u.username === backendStatus.user.username);
+    if (localIdx >= 0) state.users[localIdx] = backendStatus.user;
+    else state.users.push(backendStatus.user);
+    state.user = backendStatus.user;
   }
   state.wishlist = state.user.wishlist || [];
-  localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
   localStorage.setItem("kantiActiveUser", state.user.username || state.user.email);
   state.pincode = state.user.pincode || state.pincode;
   localStorage.setItem("kantiPincode", state.pincode);
@@ -477,53 +468,32 @@ function populateAccountForm() {
 }
 
 async function saveCustomerToBackend(customer) {
-  const backendDb = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
-  const existing = backendDb.findIndex((entry) => entry.username === customer.username);
-  if (existing >= 0) backendDb[existing] = customer;
-  else backendDb.push(customer);
-  localStorage.setItem("kantiBackendCustomers", JSON.stringify(backendDb));
-  if (window.location.protocol.startsWith("http")) {
-    try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(customer),
-      });
-      if (!response.ok) return { ok: false };
-      return { ok: true };
-    } catch {
-      return { ok: false };
-    }
+  if (!window.location.protocol.startsWith("http")) return { ok: false, error: "Backend API required. Open via server URL." };
+  try {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) return { ok: false, error: payload.error || "Registration failed." };
+    return { ok: true, user: payload.user };
+  } catch {
+    return { ok: false, error: "Unable to reach backend server." };
   }
-  return { ok: true };
 }
 
-function syncUsersFromBackend() {
-  const backendUsers = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
-  if (!backendUsers.length) return;
-  const merged = [...state.users];
-  backendUsers.forEach((backendUser) => {
-    const idx = merged.findIndex((user) => user.username === backendUser.username);
-    if (idx >= 0) merged[idx] = { ...merged[idx], ...backendUser };
-    else merged.push(backendUser);
-  });
-  state.users = merged;
-  localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
-  if (window.location.protocol.startsWith("http")) {
-    fetch("/api/users")
-      .then((response) => response.json())
-      .then((payload) => {
-        if (!payload?.users?.length) return;
-        const users = [...state.users];
-        payload.users.forEach((serverUser) => {
-          const idx = users.findIndex((user) => user.username === serverUser.username);
-          if (idx >= 0) users[idx] = { ...users[idx], ...serverUser };
-          else users.push(serverUser);
-        });
-        state.users = users;
-        localStorage.setItem("kantiUsersDb", JSON.stringify(state.users));
-      })
-      .catch(() => null);
+async function syncUsersFromBackend() {
+  if (!window.location.protocol.startsWith("http")) {
+    state.users = [];
+    return;
+  }
+  try {
+    const response = await fetch("/api/users");
+    const payload = await response.json();
+    state.users = payload?.users || [];
+  } catch {
+    state.users = [];
   }
 }
 
