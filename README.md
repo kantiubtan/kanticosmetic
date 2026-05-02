@@ -31,3 +31,14 @@ Contact details used on the site:
 - Email: `kantiubtan@gmail.com`
 - Phone/WhatsApp: `8208427976`
 - Instagram: `@kantiubtan`
+# Backend requirement for cross-device login
+
+If you need **same user login across different computers/browsers**, run this project with the included backend server:
+
+```bash
+node server.js
+```
+
+Then open the site from that server URL (not from a local `file://` open or static-only host without `/api/*` support).
+
+Without backend API reachability, registration is only saved on the current device/browser storage.

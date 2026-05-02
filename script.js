@@ -433,7 +433,10 @@ async function saveAccount(event, mode) {
     if (idx >= 0 && state.users[idx].password && state.users[idx].password !== password) return showToast("Username already exists with different password.");
     if (idx >= 0) state.users[idx] = { ...state.users[idx], ...account };
     else state.users.push(account);
-    saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
+    const backendStatus = await saveCustomerToBackend(state.users[idx >= 0 ? idx : state.users.length - 1]);
+    if (window.location.protocol.startsWith("http") && !backendStatus.ok) {
+      return showToast("Registration saved only on this device. Backend sync failed.");
+    }
     state.user = idx >= 0 ? state.users[idx] : account;
   }
   state.wishlist = state.user.wishlist || [];
@@ -473,19 +476,26 @@ function populateAccountForm() {
   });
 }
 
-function saveCustomerToBackend(customer) {
+async function saveCustomerToBackend(customer) {
   const backendDb = JSON.parse(localStorage.getItem("kantiBackendCustomers") || "[]");
   const existing = backendDb.findIndex((entry) => entry.username === customer.username);
   if (existing >= 0) backendDb[existing] = customer;
   else backendDb.push(customer);
   localStorage.setItem("kantiBackendCustomers", JSON.stringify(backendDb));
   if (window.location.protocol.startsWith("http")) {
-    fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(customer),
-    }).catch(() => null);
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      });
+      if (!response.ok) return { ok: false };
+      return { ok: true };
+    } catch {
+      return { ok: false };
+    }
   }
+  return { ok: true };
 }
 
 function syncUsersFromBackend() {
@@ -518,7 +528,7 @@ function syncUsersFromBackend() {
 }
 
 async function loginFromBackend(username, password) {
-  if (!window.location.protocol.startsWith("http")) return { user: null };
+  if (!window.location.protocol.startsWith("http")) return { user: null, error: "Backend login unavailable in file preview mode." };
   try {
     const response = await fetch("/api/login", {
       method: "POST",
@@ -529,7 +539,7 @@ async function loginFromBackend(username, password) {
     if (response.ok) return payload;
     return { error: payload.error || "Login failed." };
   } catch {
-    return { user: null };
+    return { user: null, error: "Unable to reach backend server." };
   }
 }
 
